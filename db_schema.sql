@@ -1,16 +1,6 @@
-CREATE DATABASE familyproof;
+-- CREATE DATABASE familyproof;
 
-USE familyproof;
-
-/*
-CREATE TABLE employees (
-    id INT NOT NULL PRIMARY KEY AUTO_INCREMENT,
-    name VARCHAR(100) NOT NULL,
-    address VARCHAR(255) NOT NULL,
-    salary INT(10) NOT NULL
-); */
-
-/* SET @@sql_mode := REPLACE(@@sql_mode, 'NO_ZERO_IN_DATE', ''); */
+-- USE familyproof;
 
 CREATE TABLE sources (
     id INT NOT NULL PRIMARY KEY AUTO_INCREMENT,
@@ -169,7 +159,7 @@ CREATE TABLE projects (
 
 /* LOAD TEST DATA */
 
-INSERT INTO subjects (presumedname, presumedsex, presumeddates) VALUES ('McNutt, Mary Beth', 'female', '1955-'),('Ebben, Vivian Genevieve', 'female', '1922-1986'),('McNutt, Robert Charles','male','1922-2015');
+INSERT INTO subjects (presumedname, presumedsex, presumeddates) VALUES ('McPerson, Marty Benjamin', 'male', '1955-'),('Flotide, Genevieve', 'female', '1922-1986'),('McPerson, Charles Bobert','male','1922-2015');
 INSERT INTO sources (citation) values ('A different source.'),('Amos T. Ackerman, Attorney General, to Richard Crowley, U.S. Attorney, New York, Nov. 23, 1871; Vol. C, Oct. 27, 1871–Apr. 23, 1873, p. 60; Instruction Books, 1870–1904; General Records, Letters Sent, 1849–1919; General Records of the Department of Justice, Record Group 60; National Archives Building, Washington, DC.');
 INSERT INTO assertions (subjectid, questioneid) VALUES (1,2);
 INSERT INTO information (sourceid, subjectid, questionid, content) values (1,1,1,'Menasha, Winnebago County, Wisconsin, USA'),(2,1,1,'Information content here');
@@ -177,7 +167,6 @@ INSERT INTO evidence (informationid, assertionid) values (1,1),(2,1);
 INSERT INTO researchlog (subjectid,questionid,repository,searchparams) VALUES (1,3,'my repo','my params');
 INSERT INTO researchlogentries (researchlogid,sourceid) VALUES (1,1),(1,2);
 
-/* ALTER TABLE subjects RENAME COLUMN presumeddaates TO presumeddates; */
 /* 
     SET FOREIGN_KEY_CHECKS = 0;
     SET FOREIGN_KEY_CHECKS = 1;
