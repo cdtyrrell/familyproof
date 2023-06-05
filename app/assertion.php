@@ -1,3 +1,31 @@
+<?php
+// Include config file
+require_once "config.php";
+
+if(isset($_GET["id"]) && !empty($_GET["id"])){
+    // Get hidden input value
+    $id = $_GET["id"];
+} else {
+    echo '<div class="alert alert-danger"><em>Missing assertion identifier.</em></div>';
+}
+
+// Load parties
+$sql = "SELECT id, person FROM subjects ORDER BY presumedname, presumeddates";
+if($result = mysqli_query($link, $sql)){
+    if(mysqli_num_rows($result) > 0){
+        $personsdropdown .= '<select class="form-control" name="associatedperson"><option value="0"></option>';
+        while($row = mysqli_fetch_array($result)){
+            $personsdropdown .= '<option value="' . $row["id"] . '">' . $row['person'] . '</option>';
+        }
+        $personsdropdown .= "</select>";
+        // Free result set
+        mysqli_free_result($result);
+    } else {
+        $personsdropdown = '<div class="alert alert-danger"><em>No parties found.</em></div>';
+    }
+}
+?>
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -30,16 +58,6 @@
     
                     </div>
                     <?php
-                    // Include config file
-                    require_once "config.php";
-                    
-                    if(isset($_GET["id"]) && !empty($_GET["id"])){
-                        // Get hidden input value
-                        $id = $_GET["id"];
-                    } else {
-                        echo '<div class="alert alert-danger"><em>Missing assertion identifier.</em></div>';
-                    }
-
                     // Attempt select query execution
                     $sql = "SELECT p.person, q.question, a.assertionstatus FROM assertions a JOIN subjects p ON a.subjectid = p.id JOIN questions q ON a.questionid = q.id WHERE a.id = " . $id;
                     if($result = mysqli_query($link, $sql)){
@@ -79,9 +97,6 @@
                     ?>
                     <form action="<?php echo htmlspecialchars(basename($_SERVER['REQUEST_URI'])); ?>" method="post">
 
-                        <input type="submit" class="btn btn-primary" value="Update">
-                        <a href="index.php" class="btn btn-secondary ml-2">Cancel</a>
-
                     <h3 class="mt-5">Conclusion</h3>
                     <p></p>
                         <div class="row">
@@ -92,8 +107,7 @@
                             </div>
                             <div class="form-group col-sm-4">
                                 <label>Associated Person</label>
-                                <input type="text" name="name" class="form-control <?php echo (!empty($name_err)) ? 'is-invalid' : ''; ?>" value="<?php echo $name; ?>">
-                                <span class="invalid-feedback"><?php echo $address_err;?></span>
+                                <?php echo $personsdropdown; ?>
                             </div>
                         </div>
                         <div class="row">
@@ -114,6 +128,8 @@
                             <span class="invalid-feedback"><?php echo $address_err;?></span>
                         </div>
                         <input type="hidden" name="id" value="<?php echo $id; ?>"/>
+                        <input type="submit" class="btn btn-primary" value="Update">
+                        <a href="index.php" class="btn btn-secondary ml-2">Cancel</a>
                     </form>
                     <hr>
 
