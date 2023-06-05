@@ -123,7 +123,7 @@
 
                     <div class="mb-3 clearfix">
                         <h2 class="pull-left">Evidence</h2>
-                        <a href="create.php" class="btn btn-success pull-right"><i class="fa fa-plus"></i> Connect Other Information</a>
+                        <a href="addsubject.php" class="btn btn-success pull-right"><i class="fa fa-plus"></i> Connect Other Information</a>
                     </div>
 
                     <?php
