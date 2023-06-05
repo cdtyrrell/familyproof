@@ -185,12 +185,6 @@ if($_SERVER["REQUEST_METHOD"] == "POST"){
             }
         }
     </script>
-    <style>
-        .wrapper{
-            width: 1400px;
-            margin: 0 auto;
-        }
-    </style>
 </head>
 <body>
     <?php require_once "header.php"; ?>

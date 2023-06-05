@@ -21,3 +21,9 @@ if(get_http_status_code("https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/
     echo '<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">';
 }
 ?>
+<style>
+    .wrapper{
+        width: 1200px;
+        margin: 0 auto;
+    }
+</style>

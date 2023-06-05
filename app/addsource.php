@@ -73,12 +73,6 @@ if($_SERVER["REQUEST_METHOD"] == "POST"){
     <meta charset="UTF-8">
     <title>Add a Person</title>
     <?php require_once "stylesheets.php"; ?>
-    <style>
-        .wrapper{
-            width: 600px;
-            margin: 0 auto;
-        }
-    </style>
 </head>
 <body>
     <?php require_once "header.php"; ?>

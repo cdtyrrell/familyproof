@@ -9,12 +9,6 @@
     <meta charset="UTF-8">
     <title>View Record</title>
     <?php require_once "stylesheets.php"; ?>
-    <style>
-        .wrapper{
-            width: 1400px;
-            margin: 0 auto;
-        }
-    </style>
 </head>
 <body>
     <div class="wrapper">
