@@ -2,7 +2,7 @@
 
 function get_http_status_code($url) {
     $curlInstance = curl_init($url);
-    curl_setopt($h, CURLOPT_RETURNTRANSFER, TRUE);
+    curl_setopt($curlInstance, CURLOPT_RETURNTRANSFER, TRUE);
     $response = curl_exec($curlInstance);
     $httpStatusCode = curl_getinfo($curlInstance, CURLINFO_HTTP_CODE);
     curl_close($curlInstance);
