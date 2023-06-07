@@ -119,7 +119,6 @@ CREATE TABLE evidence (
 
 CREATE TABLE researchlog (
     id INT NOT NULL PRIMARY KEY AUTO_INCREMENT,
-    /* Perhaps these should link to a unique assertion */
     researchdate DATE DEFAULT (CURRENT_DATE),
     assertionid INT NOT NULL,
     repository TEXT,
