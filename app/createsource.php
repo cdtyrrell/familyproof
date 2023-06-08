@@ -4,7 +4,6 @@ require_once "config.php";
  
 // Define variables and initialize with empty values
 $cat = $cite = $date = $prov = "";
-$cat_err = $cite_err = $date_err = $prov_err = "";
 
 // Load parties
 $sql = "SELECT id, person FROM subjects ORDER BY presumedname, presumeddates";
@@ -83,16 +82,19 @@ if($_SERVER["REQUEST_METHOD"] == "POST"){
         $prov = $input_prov;
     }
     
-    // Check input errors before inserting in database
-    if(empty($cat_err) && empty($cite_err) && empty($date_err) && empty($prov_err)){
-        // Prepare an insert statement
-        $sql = "INSERT INTO sources (category, citation, sourcedate, provenance) VALUES (?, ?, ?, ?)";
-         
+    // Prepare an insert statement
+        $sql = "INSERT INTO sources (id, category, citation, sourcedate, provenance) VALUES (?, ?, ?, ?, ?) ON DUPLICATE KEY UPDATE id = VALUES(id), category = VALUES(category), citation = VALUES(citation), sourcedate = VALUES(sourcedate), provenance = VALUES(provenance)";
+        
         if($stmt = mysqli_prepare($link, $sql)){
             // Bind variables to the prepared statement as parameters
-            mysqli_stmt_bind_param($stmt, "ssss", $param_cat, $param_cite, $param_date, $param_prov);
+            mysqli_stmt_bind_param($stmt, "issss", $param_id, $param_cat, $param_cite, $param_date, $param_prov);
             
             // Set parameters
+            if(isset($sourceid)) { 
+                $param_id = $sourceid;
+            } else {
+                $param_id = 0;
+            }
             $param_cat = $cat;
             $param_cite = $cite;
             $param_date = $date;
@@ -107,53 +109,55 @@ if($_SERVER["REQUEST_METHOD"] == "POST"){
             }
         } else {
             printf("Error: %s.\n", mysqli_stmt_error($stmt));
-            echo "Oops! Something went wrong. Please try again later.";
+            echo "Oops! Something went wrong " . $sourceid;
         }
         mysqli_stmt_close($stmt);
 
         // Prepare an insert statement for info
-        $infosql = "INSERT INTO information (sourceid, subjectid, questionid, content) VALUES ";
+        $infosql = "INSERT INTO information (sourceid, subjectid, questionid, content) VALUES (";
+        $persons = $questions = array();
         for ($p = 1; $p <= 10; $p++) {
             for ($h = 1; $h <= 20; $h++) {
                 if(isset($_POST["p".$p]) && trim($_POST["p".$p]) > 0 && isset($_POST["h".$h]) && trim($_POST["h".$h]) > 0) {
                     if(substr($infosql, -1) == ")") $infosql .= ",";
-                    $infosql .= "(" . $newid . ", " . trim($_POST["p".$p]) . ", " . trim($_POST["h".$h]) . ", '" . trim($_POST[$p."-".$h]) . "')";
+                    if(isset($sourceid)) {
+                        $infosql .= $sourceid;
+                    } else {
+                        $infosql .= $newid;
+                    }
+                    $infosql .= ", " . trim($_POST["p".$p]) . ", " . trim($_POST["h".$h]) . ", '" . trim($_POST[$p."-".$h]) . "')";
+                    $persons[] = trim($_POST["p".$p]);
+                    $questions[] = trim($_POST["h".$h]);
                 }
             }
         }
-        if($result = mysqli_query($link, $infosql)){
-            echo "Sucks ass!";
-        } else {
+        if(!$result = mysqli_query($link, $infosql)){
             printf("Error: %s.\n", mysqli_stmt_error($result));
-            echo "Your data are fucked: " . $infosql;
+            echo "Something is wrong: " . $infosql;
         }
+        mysqli_free_result($result);
 
-        $sql2 = "INSERT INTO researchlogentries (researchlogid, sourceid) VALUES (?, ?)";
-        if($stmt2 = mysqli_prepare($link, $sql2)){
-            // Bind variables to the prepared statement as parameters
-            mysqli_stmt_bind_param($stmt2, "ii", $param_rlid, $param_sid);
-            
-            // Set parameters
-            $param_rlid = $researchlogid;
-            $param_sid = $newid;
-
-            if(mysqli_stmt_execute($stmt2)){
-                // Records created successfully. Redirect to landing page
-                if(!empty($researchlogid)) {
-                    header("location: researchlog.php?researchlogid=" . $researchlogid);
-                    exit();
-                } else {
-                    header("location: index.php");
-                    exit();
-                }
-            } 
+        // Update evidence table
+        $evisql = "INSERT INTO evidence(informationid,assertionid) SELECT i.id, a.id FROM information i JOIN assertions a ON i.subjectid = a.subjectid AND i.questionid = a.questionid WHERE NOT EXISTS (SELECT * FROM evidence WHERE evidence.informationid = i.id AND evidence.assertionid = a.id)";
+        if(!$result = mysqli_query($link, $evisql)){
+            echo "Unable to refresh evidence.";
         }
-        // Close statement
-        mysqli_stmt_close($stmt2);
-    }
+        mysqli_free_result($result);
+
+        // Update assertions table
+        $assql = "UPDATE assertions SET assertionstatus = 'needs-review' WHERE subjectid IN (" . implode(',', $persons) . ") AND questionid IN (" . implode(',', $questions) . ")";
+        if(!$result = mysqli_query($link, $assql)){
+            echo "Unable to refresh assertions.";
+        }
+        mysqli_free_result($result);
 
     // Close connection
     mysqli_close($link);
+
+    if(isset($researchlogid)) {
+        header("location: researchlog.php?researchlogid=" . $researchlogid . "&sourceid=" .$newid);
+        exit();
+    }
 }
 ?>
  
@@ -196,7 +200,9 @@ if($_SERVER["REQUEST_METHOD"] == "POST"){
                     <p></p>
                     <form action="<?php echo htmlspecialchars($_SERVER["PHP_SELF"]); ?>" method="post">
                         <?php
-
+                        if(isset($sourceid) && !empty(trim($sourceid))) {
+                            echo '<input type="hidden" name="id" value="' . $sourceid . '">';
+                        }
                         if(isset($researchlogid) && !empty($researchlogid)){
                             echo '<input type="hidden" name="researchlogid" value="' . $researchlogid . '">';
                         }

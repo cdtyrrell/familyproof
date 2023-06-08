@@ -8,13 +8,22 @@ require_once "config.php";
         $newdate = trim($_POST["date"]);
         $newrepo = trim($_POST["newrepo"]);
         $newparams = trim($_POST["newparams"]);
+        $newsource = trim($_POST["sourceid"]);
         $sql = "UPDATE researchlog SET researchdate='" . $newdate . "', repository='" . $newrepo . "', searchparams='" . $newparams . "' WHERE id = " . $researchlogid;
         if($result = mysqli_query($link, $sql)){
-            header("location: researchlog.php?researchlogid=" . $rlid);
-            exit();
+            mysqli_free_result($result);
+            $sql2 = "INSERT INTO researchlogentries(researchlogid,sourceid) VALUES (" . $researchlogid . ", " . $newsource . ")";
+            if($result2 = mysqli_query($link, $sql2)){
+                mysqli_free_result($result2);
+                header("location: researchlog.php?researchlogid=" . $researchlogid);
+                exit();
+            } else {
+                echo '<div class="alert alert-danger"><em>Save failed!</em></div>';
+            }
         } else {
             echo '<div class="alert alert-danger"><em>Save failed!</em></div>';
         }
+        mysqli_free_result($result2);
         mysqli_free_result($result);
     }
 
@@ -77,17 +86,17 @@ require_once "config.php";
                             $sourcetablehtml .= '<tr><td colspan="4" class="table-warning"><em>No previous research found.</em></td></tr>';
                         }
                         if(isset($date)) {
-                            $sourcetablehtml .= '<td><input type="text" name="date" class="form-control" value="' . $date . '"></td>';
+                            $sourcetablehtml .= '<td><input type="text" name="date" class="form-control" value="' . $getdate . '"></td>';
                         } else {
                             $sourcetablehtml .= '<td><input type="text" name="date" class="form-control" value="' . date("Y-m-d") . '"></td>';
                         }
                         if(isset($newrepo)) {
-                            $sourcetablehtml .= '<td><input type="text" name="newrepo" class="form-control" value="'.$newrepo.'"></td>';
+                            $sourcetablehtml .= '<td><input type="text" name="newrepo" class="form-control" value="'.$getrepo.'"></td>';
                         } else {
                             $sourcetablehtml .= '<td><input type="text" name="newrepo" class="form-control"></td>';
                         }
                         if(isset($newparams)) {
-                            $sourcetablehtml .= '<td><input type="text" name="newparams" class="form-control" value="'.$newparams.'"></td>';
+                            $sourcetablehtml .= '<td><input type="text" name="newparams" class="form-control" value="'.$getparams.'"></td>';
                         } else {
                             $sourcetablehtml .= '<td><input type="text" name="newparams" class="form-control"></td>';
                         }
