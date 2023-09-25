@@ -41,9 +41,8 @@
                     <div class="row">
                         <?php
                         // Include config file
-                        require_once "config.php";
+                        require_once "config/config.php";
                         
-                        // Attempt select query execution
                         $sql = "SELECT id, person FROM subjects ORDER BY presumedname, presumeddates";
                         if($result = mysqli_query($link, $sql)){
                             if(mysqli_num_rows($result) > 0){
@@ -60,7 +59,7 @@
                             } else {
                                 echo '<div class="alert alert-danger"><em>No parties were found.</em></div>';
                             }
-                        }
+                        } 
 
                         $sql = "SELECT id, question FROM questions";
                         if($result = mysqli_query($link, $sql)){

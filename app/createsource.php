@@ -50,44 +50,19 @@ if($_SERVER["REQUEST_METHOD"] == "POST"){
     if(isset($_POST['researchlogid']) && !empty(trim($_POST['researchlogid']))) { $researchlogid = trim($_POST['researchlogid']); }
     if(isset($_POST['id']) && !empty(trim($_POST['id']))) { $sourceid = trim($_POST['id']); }
     
-    // Validate category
-    $input_cat = trim($_POST["cat"]);
-    if(empty($input_cat)){
-        //$cat_err = "Please enter a category.";
-    } else{
-        $cat = $input_cat;
-    }
-    
-    // Validate citation
-    $input_cite = trim($_POST["cite"]);
-    if(empty($input_cite)){
-        //$cite_err = "Please enter a citation.";     
-    } else{
-        $cite = $input_cite;
-    }
-    
-    // Validate date
-    $input_date = trim($_POST["date"]);
-    if(empty($input_date)){
-        //$date_err = "Please enter a date in yyyy-mm-dd format.";
-    } else{
-        $date = $input_date;
-    }
+    $cat = trim($_POST["cat"]);
+    $cite = trim($_POST["cite"]);
+    $date = trim($_POST["date"]);
+    $prov = trim($_POST["prov"]);
+    $inform = trim($_POST["inform"]);
 
-    // Validate provenance
-    $input_prov = trim($_POST["prov"]);
-    if(empty($input_prov)){
-        //$prov_err = "Please indicate the provenance.";
-    } else{
-        $prov = $input_prov;
-    }
     
     // Prepare an insert statement
-        $sql = "INSERT INTO sources (id, category, citation, sourcedate, provenance) VALUES (?, ?, ?, ?, ?) ON DUPLICATE KEY UPDATE id = VALUES(id), category = VALUES(category), citation = VALUES(citation), sourcedate = VALUES(sourcedate), provenance = VALUES(provenance)";
+        $sql = "INSERT INTO sources (id, category, citation, sourcedate, provenance, informants) VALUES (?, ?, ?, ?, ?) ON DUPLICATE KEY UPDATE id = VALUES(id), category = VALUES(category), citation = VALUES(citation), sourcedate = VALUES(sourcedate), provenance = VALUES(provenance), informants = VALUES(informants)";
         
         if($stmt = mysqli_prepare($link, $sql)){
             // Bind variables to the prepared statement as parameters
-            mysqli_stmt_bind_param($stmt, "issss", $param_id, $param_cat, $param_cite, $param_date, $param_prov);
+            mysqli_stmt_bind_param($stmt, "isssss", $param_id, $param_cat, $param_cite, $param_date, $param_prov, $param_inform);
             
             // Set parameters
             if(isset($sourceid)) { 
@@ -99,6 +74,7 @@ if($_SERVER["REQUEST_METHOD"] == "POST"){
             $param_cite = $cite;
             $param_date = $date;
             $param_prov = $prov;
+            $param_inform = $inform;
             
             // Attempt to execute the prepared statement
             if(mysqli_stmt_execute($stmt)){
@@ -268,34 +244,48 @@ if($_SERVER["REQUEST_METHOD"] == "POST"){
                         </div></div>
                         <div class="form-group">
                             <label>Citation</label>
-                            <textarea name="cite" id="citation" class="form-control <?php echo (!empty($cite_err)) ? 'is-invalid' : ''; ?>"><?php echo $cite; ?></textarea>
-                            <span class="invalid-feedback"><?php echo $cite_err;?></span>
+                            <textarea name="cite" id="citation" class="form-control"><?php echo $cite; ?></textarea>
                         </div>
                         <div class="row">
                             <div class="col-md-3">
                                 <div class="form-group">
                                     <label>Date (yyyy-mm-dd)</label>
-                                    <input type="text" name="date" class="form-control <?php echo (!empty($date_err)) ? 'is-invalid' : ''; ?>" value="<?php echo $date; ?>">
-                                    <span class="invalid-feedback"><?php echo $date_err;?></span>
+                                    <input type="text" name="date" class="form-control" value="<?php echo $date; ?>">
                                 </div>
                             </div>
                             <div class="col-md-3">
                                 <div class="form-group">
                                     <label>Provenance</label>
-                                    <select name="prov" class="form-control <?php echo (!empty($cat_err)) ? 'is-invalid' : ''; ?>">
-                                        <option value="unknown">Unknown</option>    
-                                        <option value="original">Original</option>
-                                        <option value="derived">Derived</option>
-                                        <option value="authored">Authored</option>
+                                    <select name="prov" class="form-control">
+                                    <?php 
+                                    if($prov == 'unknown') {
+                                        echo '<option value="unknown" selected>Unknown</option>';
+                                    } else {
+                                        echo '<option value="unknown">Unknown</option>';
+                                    }
+                                    if($prov == 'original') {
+                                        echo '<option value="original" selected>Original</option>';
+                                    } else {
+                                        echo '<option value="original">Original</option>';
+                                    }
+                                    if($prov == 'derived') {
+                                        echo '<option value="derived" selected>Derived</option>';
+                                    } else {
+                                        echo '<option value="derived">Derived</option>';
+                                    }
+                                    if($prov == 'authored') {
+                                        echo '<option value="authored" selected>Authored</option>';
+                                    } else {
+                                        echo '<option value="authored">Authored</option>';
+                                    }
+                                    ?>
                                     </select>
-                                    <span class="invalid-feedback"><?php echo $prov_err;?></span>
                                 </div>
                             </div>
                             <div class="col-md-6">
                                 <div class="form-group">
                                     <label>Informant(s)</label>
-                                    <input type="text" name="inform" class="form-control <?php echo (!empty($date_err)) ? 'is-invalid' : ''; ?>" value="<?php echo $inform; ?>">
-                                    <span class="invalid-feedback"><?php echo $date_err;?></span>
+                                    <input type="text" name="inform" class="form-control" value="<?php echo $inform; ?>">
                                 </div>
                             </div>
                         </div>
