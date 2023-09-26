@@ -295,15 +295,29 @@ if($_SERVER["REQUEST_METHOD"] == "POST"){
                         <h3 class="mt-5">Add Source Information</h3>
 
                         <?php
-                        $sql = "SELECT subjectid, questionid, content FROM information WHERE sourceid = ". $id ." ORDER BY subjectid, questionid";
+                        if(isset($sourceid)){
+                            $sql = "SELECT subjectid, questionid, content FROM information WHERE sourceid = ". $sourceid ." ORDER BY subjectid, questionid";
                             if($result = mysqli_query($link, $sql)){
                                 if(mysqli_num_rows($result) > 0){
+                                    $infoArr = array(array());
+                                    $skeys = $qkeys = array();
+                                    $subject = $question = '';
                                     while($row = mysqli_fetch_array($result)){
+                                        if($subject != $row['subjectid']){
+                                            $subject = $row['subjectid'];
+                                            $skeys[] = $subject;
+                                        }
+                                        if($question != $row['questionid']){
+                                            $question = $row['questionid'];
+                                            $qkeys[] = $question;
+                                        }
+                                        $infoArr[$row['subjectid']][$row['questionid']] = $row['content'];
                                     }
                                 }
                                 // Free result set
                                 mysqli_free_result($result);
                             }
+                        }
                         ?>
 
                         <div id="container" class="table-responsive">
@@ -312,264 +326,35 @@ if($_SERVER["REQUEST_METHOD"] == "POST"){
                             <thead>
                                 <tr>
                                     <th>Person</th>
-                                    <th><select class="form-control" name="h1"><?php echo $questionsdropdown; ?></th>
-                                    <th><select class="form-control" name="h2"><?php echo $questionsdropdown; ?></th>
-                                    <th><select class="form-control" name="h3"><?php echo $questionsdropdown; ?></th>
-                                    <th><select class="form-control" name="h4"><?php echo $questionsdropdown; ?></th>
-                                    <th><select class="form-control" name="h5"><?php echo $questionsdropdown; ?></th>
-                                    <th><select class="form-control" name="h6"><?php echo $questionsdropdown; ?></th>
-                                    <th><select class="form-control" name="h7"><?php echo $questionsdropdown; ?></th>
-                                    <th><select class="form-control" name="h8"><?php echo $questionsdropdown; ?></th>
-                                    <th><select class="form-control" name="h9"><?php echo $questionsdropdown; ?></th>
-                                    <th><select class="form-control" name="h10"><?php echo $questionsdropdown; ?></th>
-                                    <th><select class="form-control" name="h11"><?php echo $questionsdropdown; ?></th>
-                                    <th><select class="form-control" name="h12"><?php echo $questionsdropdown; ?></th>
-                                    <th><select class="form-control" name="h13"><?php echo $questionsdropdown; ?></th>
-                                    <th><select class="form-control" name="h14"><?php echo $questionsdropdown; ?></th>
-                                    <th><select class="form-control" name="h15"><?php echo $questionsdropdown; ?></th>
-                                    <th><select class="form-control" name="h16"><?php echo $questionsdropdown; ?></th>
-                                    <th><select class="form-control" name="h17"><?php echo $questionsdropdown; ?></th>
-                                    <th><select class="form-control" name="h18"><?php echo $questionsdropdown; ?></th>
-                                    <th><select class="form-control" name="h19"><?php echo $questionsdropdown; ?></th>
-                                    <th><select class="form-control" name="h20"><?php echo $questionsdropdown; ?></th>
-
-
+                                    <?php
+                                    for($q = 1; $q < 21; $q++) {
+                                        echo '<th><select class="form-control" id="h'.$q.'" name="h'.$q.'"><'.$questionsdropdown.'</th>';
+                                    }
+                                    ?>
                                 </tr>
                             </thead>
                             <tbody>
-                                <tr>
-                                    <td><select class="form-control" name="p1"><?php echo $personsdropdown; ?></td>
-                                    <td><input type="text" class="form-control" name="1-1"></td>
-                                    <td><input type="text" class="form-control" name="1-2"></td>
-                                    <td><input type="text" class="form-control" name="1-3"></td>
-                                    <td><input type="text" class="form-control" name="1-4"></td>
-                                    <td><input type="text" class="form-control" name="1-5"></td>
-                                    <td><input type="text" class="form-control" name="1-6"></td>
-                                    <td><input type="text" class="form-control" name="1-7"></td>
-                                    <td><input type="text" class="form-control" name="1-8"></td>
-                                    <td><input type="text" class="form-control" name="1-9"></td>
-                                    <td><input type="text" class="form-control" name="1-10"></td>
-                                    <td><input type="text" class="form-control" name="1-11"></td>
-                                    <td><input type="text" class="form-control" name="1-12"></td>
-                                    <td><input type="text" class="form-control" name="1-13"></td>
-                                    <td><input type="text" class="form-control" name="1-14"></td>
-                                    <td><input type="text" class="form-control" name="1-15"></td>
-                                    <td><input type="text" class="form-control" name="1-16"></td>
-                                    <td><input type="text" class="form-control" name="1-17"></td>
-                                    <td><input type="text" class="form-control" name="1-18"></td>
-                                    <td><input type="text" class="form-control" name="1-19"></td>
-                                    <td><input type="text" class="form-control" name="1-20"></td>
-                                </tr>
-                                <tr>
-                                    <td><select class="form-control" name="p2"><?php echo $personsdropdown; ?></td>
-                                    <td><input type="text" class="form-control" name="2-1"></td>
-                                    <td><input type="text" class="form-control" name="2-2"></td>
-                                    <td><input type="text" class="form-control" name="2-3"></td>
-                                    <td><input type="text" class="form-control" name="2-4"></td>
-                                    <td><input type="text" class="form-control" name="2-5"></td>
-                                    <td><input type="text" class="form-control" name="2-6"></td>
-                                    <td><input type="text" class="form-control" name="2-7"></td>
-                                    <td><input type="text" class="form-control" name="2-8"></td>
-                                    <td><input type="text" class="form-control" name="2-9"></td>
-                                    <td><input type="text" class="form-control" name="2-10"></td>
-                                    <td><input type="text" class="form-control" name="2-11"></td>
-                                    <td><input type="text" class="form-control" name="2-12"></td>
-                                    <td><input type="text" class="form-control" name="2-13"></td>
-                                    <td><input type="text" class="form-control" name="2-14"></td>
-                                    <td><input type="text" class="form-control" name="2-15"></td>
-                                    <td><input type="text" class="form-control" name="2-16"></td>
-                                    <td><input type="text" class="form-control" name="2-17"></td>
-                                    <td><input type="text" class="form-control" name="2-18"></td>
-                                    <td><input type="text" class="form-control" name="2-19"></td>
-                                    <td><input type="text" class="form-control" name="2-20"></td>
-                                </tr>
-                                <tr>
-                                <td><select class="form-control" name="p3"><?php echo $personsdropdown; ?></td>
-                                    <td><input type="text" class="form-control" name="3-1"></td>
-                                    <td><input type="text" class="form-control" name="3-2"></td>
-                                    <td><input type="text" class="form-control" name="3-3"></td>
-                                    <td><input type="text" class="form-control" name="3-4"></td>
-                                    <td><input type="text" class="form-control" name="3-5"></td>
-                                    <td><input type="text" class="form-control" name="3-6"></td>
-                                    <td><input type="text" class="form-control" name="3-7"></td>
-                                    <td><input type="text" class="form-control" name="3-8"></td>
-                                    <td><input type="text" class="form-control" name="3-9"></td>
-                                    <td><input type="text" class="form-control" name="3-10"></td>
-                                    <td><input type="text" class="form-control" name="3-11"></td>
-                                    <td><input type="text" class="form-control" name="3-12"></td>
-                                    <td><input type="text" class="form-control" name="3-13"></td>
-                                    <td><input type="text" class="form-control" name="3-14"></td>
-                                    <td><input type="text" class="form-control" name="3-15"></td>
-                                    <td><input type="text" class="form-control" name="3-16"></td>
-                                    <td><input type="text" class="form-control" name="3-17"></td>
-                                    <td><input type="text" class="form-control" name="3-18"></td>
-                                    <td><input type="text" class="form-control" name="3-19"></td>
-                                    <td><input type="text" class="form-control" name="3-20"></td>
-                                </tr>
-                                <tr>
-                                <td><select class="form-control" name="p4"><?php echo $personsdropdown; ?></td>
-                                    <td><input type="text" class="form-control" name="4-1"></td>
-                                    <td><input type="text" class="form-control" name="4-2"></td>
-                                    <td><input type="text" class="form-control" name="4-3"></td>
-                                    <td><input type="text" class="form-control" name="4-4"></td>
-                                    <td><input type="text" class="form-control" name="4-5"></td>
-                                    <td><input type="text" class="form-control" name="4-6"></td>
-                                    <td><input type="text" class="form-control" name="4-7"></td>
-                                    <td><input type="text" class="form-control" name="4-8"></td>
-                                    <td><input type="text" class="form-control" name="4-9"></td>
-                                    <td><input type="text" class="form-control" name="4-10"></td>
-                                    <td><input type="text" class="form-control" name="4-11"></td>
-                                    <td><input type="text" class="form-control" name="4-12"></td>
-                                    <td><input type="text" class="form-control" name="4-13"></td>
-                                    <td><input type="text" class="form-control" name="4-14"></td>
-                                    <td><input type="text" class="form-control" name="4-15"></td>
-                                    <td><input type="text" class="form-control" name="4-16"></td>
-                                    <td><input type="text" class="form-control" name="4-17"></td>
-                                    <td><input type="text" class="form-control" name="4-18"></td>
-                                    <td><input type="text" class="form-control" name="4-19"></td>
-                                    <td><input type="text" class="form-control" name="4-20"></td>
-                                </tr>
-                                <tr>
-                                <td><select class="form-control" name="p5"><?php echo $personsdropdown; ?></td>
-                                    <td><input type="text" class="form-control" name="5-1"></td>
-                                    <td><input type="text" class="form-control" name="5-2"></td>
-                                    <td><input type="text" class="form-control" name="5-3"></td>
-                                    <td><input type="text" class="form-control" name="5-4"></td>
-                                    <td><input type="text" class="form-control" name="5-5"></td>
-                                    <td><input type="text" class="form-control" name="5-6"></td>
-                                    <td><input type="text" class="form-control" name="5-7"></td>
-                                    <td><input type="text" class="form-control" name="5-8"></td>
-                                    <td><input type="text" class="form-control" name="5-9"></td>
-                                    <td><input type="text" class="form-control" name="5-10"></td>
-                                    <td><input type="text" class="form-control" name="5-11"></td>
-                                    <td><input type="text" class="form-control" name="5-12"></td>
-                                    <td><input type="text" class="form-control" name="5-13"></td>
-                                    <td><input type="text" class="form-control" name="5-14"></td>
-                                    <td><input type="text" class="form-control" name="5-15"></td>
-                                    <td><input type="text" class="form-control" name="5-16"></td>
-                                    <td><input type="text" class="form-control" name="5-17"></td>
-                                    <td><input type="text" class="form-control" name="5-18"></td>
-                                    <td><input type="text" class="form-control" name="5-19"></td>
-                                    <td><input type="text" class="form-control" name="5-20"></td>
-                                </tr>
-                                <tr>
-                                <td><select class="form-control" name="p6"><?php echo $personsdropdown; ?></td>
-                                    <td><input type="text" class="form-control" name="6-1"></td>
-                                    <td><input type="text" class="form-control" name="6-2"></td>
-                                    <td><input type="text" class="form-control" name="6-3"></td>
-                                    <td><input type="text" class="form-control" name="6-4"></td>
-                                    <td><input type="text" class="form-control" name="6-5"></td>
-                                    <td><input type="text" class="form-control" name="6-6"></td>
-                                    <td><input type="text" class="form-control" name="6-7"></td>
-                                    <td><input type="text" class="form-control" name="6-8"></td>
-                                    <td><input type="text" class="form-control" name="6-9"></td>
-                                    <td><input type="text" class="form-control" name="6-10"></td>
-                                    <td><input type="text" class="form-control" name="6-11"></td>
-                                    <td><input type="text" class="form-control" name="6-12"></td>
-                                    <td><input type="text" class="form-control" name="6-13"></td>
-                                    <td><input type="text" class="form-control" name="6-14"></td>
-                                    <td><input type="text" class="form-control" name="6-15"></td>
-                                    <td><input type="text" class="form-control" name="6-16"></td>
-                                    <td><input type="text" class="form-control" name="6-17"></td>
-                                    <td><input type="text" class="form-control" name="6-18"></td>
-                                    <td><input type="text" class="form-control" name="6-19"></td>
-                                    <td><input type="text" class="form-control" name="6-20"></td>
-                                </tr>
-                                <tr>
-                                <td><select class="form-control" name="p7"><?php echo $personsdropdown; ?></td>
-                                    <td><input type="text" class="form-control" name="7-1"></td>
-                                    <td><input type="text" class="form-control" name="7-2"></td>
-                                    <td><input type="text" class="form-control" name="7-3"></td>
-                                    <td><input type="text" class="form-control" name="7-4"></td>
-                                    <td><input type="text" class="form-control" name="7-5"></td>
-                                    <td><input type="text" class="form-control" name="7-6"></td>
-                                    <td><input type="text" class="form-control" name="7-7"></td>
-                                    <td><input type="text" class="form-control" name="7-8"></td>
-                                    <td><input type="text" class="form-control" name="7-9"></td>
-                                    <td><input type="text" class="form-control" name="7-10"></td>
-                                    <td><input type="text" class="form-control" name="7-11"></td>
-                                    <td><input type="text" class="form-control" name="7-12"></td>
-                                    <td><input type="text" class="form-control" name="7-13"></td>
-                                    <td><input type="text" class="form-control" name="7-14"></td>
-                                    <td><input type="text" class="form-control" name="7-15"></td>
-                                    <td><input type="text" class="form-control" name="7-16"></td>
-                                    <td><input type="text" class="form-control" name="7-17"></td>
-                                    <td><input type="text" class="form-control" name="7-18"></td>
-                                    <td><input type="text" class="form-control" name="7-19"></td>
-                                    <td><input type="text" class="form-control" name="7-20"></td>
-                                </tr>
-                                <tr>
-                                <td><select class="form-control" name="p8"><?php echo $personsdropdown; ?></td>
-                                    <td><input type="text" class="form-control" name="8-1"></td>
-                                    <td><input type="text" class="form-control" name="8-2"></td>
-                                    <td><input type="text" class="form-control" name="8-3"></td>
-                                    <td><input type="text" class="form-control" name="8-4"></td>
-                                    <td><input type="text" class="form-control" name="8-5"></td>
-                                    <td><input type="text" class="form-control" name="8-6"></td>
-                                    <td><input type="text" class="form-control" name="8-7"></td>
-                                    <td><input type="text" class="form-control" name="8-8"></td>
-                                    <td><input type="text" class="form-control" name="8-9"></td>
-                                    <td><input type="text" class="form-control" name="8-10"></td>
-                                    <td><input type="text" class="form-control" name="8-11"></td>
-                                    <td><input type="text" class="form-control" name="8-12"></td>
-                                    <td><input type="text" class="form-control" name="8-13"></td>
-                                    <td><input type="text" class="form-control" name="8-14"></td>
-                                    <td><input type="text" class="form-control" name="8-15"></td>
-                                    <td><input type="text" class="form-control" name="8-16"></td>
-                                    <td><input type="text" class="form-control" name="8-17"></td>
-                                    <td><input type="text" class="form-control" name="8-18"></td>
-                                    <td><input type="text" class="form-control" name="8-19"></td>
-                                    <td><input type="text" class="form-control" name="8-20"></td>
-                                </tr>
-                                <tr>
-                                <td><select class="form-control" name="p9"><?php echo $personsdropdown; ?></td>
-                                    <td><input type="text" class="form-control" name="9-1"></td>
-                                    <td><input type="text" class="form-control" name="9-2"></td>
-                                    <td><input type="text" class="form-control" name="9-3"></td>
-                                    <td><input type="text" class="form-control" name="9-4"></td>
-                                    <td><input type="text" class="form-control" name="9-5"></td>
-                                    <td><input type="text" class="form-control" name="9-6"></td>
-                                    <td><input type="text" class="form-control" name="9-7"></td>
-                                    <td><input type="text" class="form-control" name="9-8"></td>
-                                    <td><input type="text" class="form-control" name="9-9"></td>
-                                    <td><input type="text" class="form-control" name="9-10"></td>
-                                    <td><input type="text" class="form-control" name="9-11"></td>
-                                    <td><input type="text" class="form-control" name="9-12"></td>
-                                    <td><input type="text" class="form-control" name="9-13"></td>
-                                    <td><input type="text" class="form-control" name="9-14"></td>
-                                    <td><input type="text" class="form-control" name="9-15"></td>
-                                    <td><input type="text" class="form-control" name="9-16"></td>
-                                    <td><input type="text" class="form-control" name="9-17"></td>
-                                    <td><input type="text" class="form-control" name="9-18"></td>
-                                    <td><input type="text" class="form-control" name="9-19"></td>
-                                    <td><input type="text" class="form-control" name="9-20"></td>
-                                </tr>
-                                <tr>
-                                <td><select class="form-control" name="p10"><?php echo $personsdropdown; ?></td>
-                                    <td><input type="text" class="form-control" name="10-1"></td>
-                                    <td><input type="text" class="form-control" name="10-2"></td>
-                                    <td><input type="text" class="form-control" name="10-3"></td>
-                                    <td><input type="text" class="form-control" name="10-4"></td>
-                                    <td><input type="text" class="form-control" name="10-5"></td>
-                                    <td><input type="text" class="form-control" name="10-6"></td>
-                                    <td><input type="text" class="form-control" name="10-7"></td>
-                                    <td><input type="text" class="form-control" name="10-8"></td>
-                                    <td><input type="text" class="form-control" name="10-9"></td>
-                                    <td><input type="text" class="form-control" name="10-10"></td>
-                                    <td><input type="text" class="form-control" name="10-11"></td>
-                                    <td><input type="text" class="form-control" name="10-12"></td>
-                                    <td><input type="text" class="form-control" name="10-13"></td>
-                                    <td><input type="text" class="form-control" name="10-14"></td>
-                                    <td><input type="text" class="form-control" name="10-15"></td>
-                                    <td><input type="text" class="form-control" name="10-16"></td>
-                                    <td><input type="text" class="form-control" name="10-17"></td>
-                                    <td><input type="text" class="form-control" name="10-18"></td>
-                                    <td><input type="text" class="form-control" name="10-19"></td>
-                                    <td><input type="text" class="form-control" name="10-20"></td>
-                                </tr>
+                                <?php 
+                                for($s = 1; $s < 11; $s++) {
+                                    echo '<tr>';
+                                    echo '<td><select class="form-control" id="p'.$s.'" name="p'.$s.'">'.$personsdropdown.'</td>';
+                                    for($q = 1; $q < 21; $q++) {
+                                        if(count($skeys) >= $s && count($qkeys) >= $q){
+                                            echo '<td><input type="text" class="form-control" name="'.$s.'-'.$q.'" value="'.$infoArr[$skeys[$s-1]][$qkeys[$q-1]].'"></td>';
+                                        } else {
+                                            echo '<td><input type="text" class="form-control" name="'.$s.'-'.$q.'"></td>';
+                                        }
+                                    }
+                                    echo '</tr>';
+                                }
+                                ?>
                             </tbody>
                         </table>
                         <?php 
+                            echo '<script>';
+                            echo '['.implode(",", $skeys).'].forEach((sval, idx) => { document.getElementById("p"+(idx+1)).value = sval });';
+                            echo '['.implode(",", $qkeys).'].forEach((qval, indx) => { document.getElementById("h"+(indx+1)).value = qval });';
+                            echo '</script>';
                             /*for(){
                                 while($row = mysqli_fetch_array($result)){
                                     echo "<tr>";
