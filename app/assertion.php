@@ -1,6 +1,6 @@
 <?php
 // Include config file
-require_once "config.php";
+require_once "config/config.php";
 
 /////////// On reload with $_POST, insert /////////////
  
@@ -178,7 +178,7 @@ if(isset($_POST["id"]) && !empty($_POST["id"])){
 
                     <div class="mb-3 clearfix">
                         <h2 class="pull-left">Evidence</h2>
-                        <a href="addsubject.php" class="btn btn-success pull-right"><i class="fa fa-plus"></i> Connect Other Information</a>
+                        <a href="newsubject.php" class="btn btn-success pull-right"><i class="fa fa-plus"></i> Connect Other Information</a>
                     </div>
 
                     <?php

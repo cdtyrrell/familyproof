@@ -1,5 +1,5 @@
 <?php
-require_once "config.php";
+require_once "config/config.php";
 
 // PAGE MODE DETERMINATION TREE
 // 1. load with $_POST, UPDATE researchlog
@@ -227,7 +227,7 @@ require_once "config.php";
         });
 
         function addNewSource($id) {
-            window.location.href = "createsource.php?researchlogid=" + $id;
+            window.location.href = "newsource.php?researchlogid=" + $id;
         }
     </script>
 </head>

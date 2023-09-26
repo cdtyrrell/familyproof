@@ -1,15 +1,15 @@
 <?php
 // Include config file
-require_once "config.php";
+require_once "config/config.php";
  
 // Define variables and initialize with empty values
-$cat = $cite = $date = $prov = "";
+$category = $citation = $sourcedate = $provenance = "";
 
 // Load parties
 $sql = "SELECT id, person FROM subjects ORDER BY presumedname, presumeddates";
 if($result = mysqli_query($link, $sql)){
     if(mysqli_num_rows($result) > 0){
-        $personsdropdown .= '<option value="0"></option>';
+        $personsdropdown = '<option value="0"></option>';
         while($row = mysqli_fetch_array($result)){
             $personsdropdown .= '<option value="' . $row["id"] . '">' . $row['person'] . '</option>';
         }
@@ -25,7 +25,7 @@ if($result = mysqli_query($link, $sql)){
 $sql = "SELECT id, question FROM questions";
 if($result = mysqli_query($link, $sql)){
     if(mysqli_num_rows($result) > 0){
-        $questionsdropdown .= '<option value="0"></option>';
+        $questionsdropdown = '<option value="0"></option>';
         while($row = mysqli_fetch_array($result)){
             $questionsdropdown .= '<option value="' . $row["id"] . '">' . $row['question'] . '</option>';
         }
@@ -50,15 +50,15 @@ if($_SERVER["REQUEST_METHOD"] == "POST"){
     if(isset($_POST['researchlogid']) && !empty(trim($_POST['researchlogid']))) { $researchlogid = trim($_POST['researchlogid']); }
     if(isset($_POST['id']) && !empty(trim($_POST['id']))) { $sourceid = trim($_POST['id']); }
     
-    $cat = trim($_POST["cat"]);
-    $cite = trim($_POST["cite"]);
-    $date = trim($_POST["date"]);
-    $prov = trim($_POST["prov"]);
-    $inform = trim($_POST["inform"]);
+    $category = NULL;//trim($_POST["cat"]);
+    $citation = trim($_POST["cite"]);
+    $sourcedate = trim($_POST["date"]);
+    $provenance = trim($_POST["prov"]);
+    $informants = trim($_POST["inform"]);
 
     
     // Prepare an insert statement
-        $sql = "INSERT INTO sources (id, category, citation, sourcedate, provenance, informants) VALUES (?, ?, ?, ?, ?) ON DUPLICATE KEY UPDATE id = VALUES(id), category = VALUES(category), citation = VALUES(citation), sourcedate = VALUES(sourcedate), provenance = VALUES(provenance), informants = VALUES(informants)";
+        $sql = "INSERT INTO sources (id, category, citation, sourcedate, provenance, informants) VALUES (?, ?, ?, ?, ?, ?) ON DUPLICATE KEY UPDATE id = VALUES(id), category = VALUES(category), citation = VALUES(citation), sourcedate = VALUES(sourcedate), provenance = VALUES(provenance), informants = VALUES(informants)";
         
         if($stmt = mysqli_prepare($link, $sql)){
             // Bind variables to the prepared statement as parameters
@@ -70,11 +70,11 @@ if($_SERVER["REQUEST_METHOD"] == "POST"){
             } else {
                 $param_id = 0;
             }
-            $param_cat = $cat;
-            $param_cite = $cite;
-            $param_date = $date;
-            $param_prov = $prov;
-            $param_inform = $inform;
+            $param_cat = $category;
+            $param_cite = $citation;
+            $param_date = $sourcedate;
+            $param_prov = $provenance;
+            $param_inform = $informants;
             
             // Attempt to execute the prepared statement
             if(mysqli_stmt_execute($stmt)){
@@ -83,18 +83,18 @@ if($_SERVER["REQUEST_METHOD"] == "POST"){
                 printf("Error: %s.\n", mysqli_stmt_error($stmt));
                 echo "Dang! Something went wrong.";
             }
+            mysqli_stmt_close($stmt);
         } else {
-            printf("Error: %s.\n", mysqli_stmt_error($stmt));
-            echo "Oops! Something went wrong " . $sourceid;
+            //printf("Error: %s.\n", mysqli_stmt_error($stmt));
+            echo "INSERT/UPDATE of `sources` failed ";
         }
-        mysqli_stmt_close($stmt);
 
         // Prepare an insert statement for info
         $infosql = "INSERT INTO information (sourceid, subjectid, questionid, content) VALUES (";
         $persons = $questions = array();
         for ($p = 1; $p <= 10; $p++) {
             for ($h = 1; $h <= 20; $h++) {
-                if(isset($_POST["p".$p]) && trim($_POST["p".$p]) > 0 && isset($_POST["h".$h]) && trim($_POST["h".$h]) > 0) {
+                if(trim($_POST["p".$p]) > 0 && trim($_POST["h".$h]) > 0) { 
                     if(substr($infosql, -1) == ")") $infosql .= ",";
                     if(isset($sourceid)) {
                         $infosql .= $sourceid;
@@ -107,28 +107,31 @@ if($_SERVER["REQUEST_METHOD"] == "POST"){
                 }
             }
         }
-        if(!$result = mysqli_query($link, $infosql)){
-            printf("Error: %s.\n", mysqli_stmt_error($result));
-            echo "Something is wrong: " . $infosql;
+        if($result = mysqli_query($link, $infosql)){
+            mysqli_free_result($result);
+        } else {
+            //printf("Error: %s.\n", mysqli_stmt_error($result));
+            echo "INSERT into `information` failed. " . $infosql;
         }
-        mysqli_free_result($result);
 
         // Update evidence table
         $evisql = "INSERT INTO evidence(informationid,assertionid) SELECT i.id, a.id FROM information i JOIN assertions a ON i.subjectid = a.subjectid AND i.questionid = a.questionid WHERE NOT EXISTS (SELECT * FROM evidence WHERE evidence.informationid = i.id AND evidence.assertionid = a.id)";
-        if(!$result = mysqli_query($link, $evisql)){
+        if($result = mysqli_query($link, $evisql)){
+            mysqli_free_result($result);        
+        } else {
             echo "Unable to refresh evidence.";
         }
-        mysqli_free_result($result);
 
         // Update assertions table
         $assql = "UPDATE assertions SET assertionstatus = 'needs-review' WHERE subjectid IN (" . implode(',', $persons) . ") AND questionid IN (" . implode(',', $questions) . ")";
         if(!$result = mysqli_query($link, $assql)){
             echo "Unable to refresh assertions.";
+        } else {
+            mysqli_free_result($result);
         }
-        mysqli_free_result($result);
 
     // Close connection
-    mysqli_close($link);
+    //mysqli_close($link);
 
     if(isset($researchlogid)) {
         header("location: researchlog.php?researchlogid=" . $researchlogid . "&sourceid=" .$newid);
@@ -186,28 +189,28 @@ if($_SERVER["REQUEST_METHOD"] == "POST"){
                         echo '<div class="form-group col-md-9">';
 
                             // Include config file
-                            require_once "config.php";
+                            require_once "config/config.php";
                             
                             // Get source data for update
                             if(isset($sourceid) && !empty(trim($sourceid))) {
-                                $sql = "SELECT category, citation, sourcedate, provenance, informants, mediaurl FROM sources WHERE id=" . $sourceid;
+                                $sql = "SELECT id, category, citation, sourcedate, provenance, informants, mediaurl FROM sources WHERE id=" . $sourceid;
                                 if($result = mysqli_query($link, $sql)){
                                     if(mysqli_num_rows($result) == 1){
                                         $row = mysqli_fetch_array($result, MYSQLI_ASSOC);
 
                                         // Retrieve individual field value
-                                        $cat = $row["category"];
-                                        $cite = $row["citation"];
-                                        $date = $row["sourcedate"];
-                                        $prov =  $row["provenance"];
-                                        $inform = $row["informants"];
+                                        $category = $row["category"];
+                                        $citation = $row["citation"];
+                                        $sourcedate = $row["sourcedate"];
+                                        $provenance =  $row["provenance"];
+                                        $informants = $row["informants"];
                                         $url = $row["mediaurl"];
                         
                                         // Free result set
                                         mysqli_free_result($result);
 
                                         echo '<label>Category</label>';
-                                        echo '<input type="text" name="cat" id="category" class="form-control" value="'.$cat.'">';
+                                        echo '<input type="text" name="cat" id="category" class="form-control" value="'.$category.'">';
 
                                     }
                                 } else {
@@ -244,13 +247,13 @@ if($_SERVER["REQUEST_METHOD"] == "POST"){
                         </div></div>
                         <div class="form-group">
                             <label>Citation</label>
-                            <textarea name="cite" id="citation" class="form-control"><?php echo $cite; ?></textarea>
+                            <textarea name="cite" id="citation" class="form-control"><?php echo $citation; ?></textarea>
                         </div>
                         <div class="row">
                             <div class="col-md-3">
                                 <div class="form-group">
                                     <label>Date (yyyy-mm-dd)</label>
-                                    <input type="text" name="date" class="form-control" value="<?php echo $date; ?>">
+                                    <input type="text" name="date" class="form-control" value="<?php echo $sourcedate; ?>">
                                 </div>
                             </div>
                             <div class="col-md-3">
@@ -258,22 +261,22 @@ if($_SERVER["REQUEST_METHOD"] == "POST"){
                                     <label>Provenance</label>
                                     <select name="prov" class="form-control">
                                     <?php 
-                                    if($prov == 'unknown') {
+                                    if($provenance == 'unknown') {
                                         echo '<option value="unknown" selected>Unknown</option>';
                                     } else {
                                         echo '<option value="unknown">Unknown</option>';
                                     }
-                                    if($prov == 'original') {
+                                    if($provenance == 'original') {
                                         echo '<option value="original" selected>Original</option>';
                                     } else {
                                         echo '<option value="original">Original</option>';
                                     }
-                                    if($prov == 'derived') {
+                                    if($provenance == 'derived') {
                                         echo '<option value="derived" selected>Derived</option>';
                                     } else {
                                         echo '<option value="derived">Derived</option>';
                                     }
-                                    if($prov == 'authored') {
+                                    if($provenance == 'authored') {
                                         echo '<option value="authored" selected>Authored</option>';
                                     } else {
                                         echo '<option value="authored">Authored</option>';
@@ -285,11 +288,23 @@ if($_SERVER["REQUEST_METHOD"] == "POST"){
                             <div class="col-md-6">
                                 <div class="form-group">
                                     <label>Informant(s)</label>
-                                    <input type="text" name="inform" class="form-control" value="<?php echo $inform; ?>">
+                                    <input type="text" name="inform" class="form-control" value="<?php echo $informants; ?>">
                                 </div>
                             </div>
                         </div>
                         <h3 class="mt-5">Add Source Information</h3>
+
+                        <?php
+                        $sql = "SELECT subjectid, questionid, content FROM information WHERE sourceid = ". $id ." ORDER BY subjectid, questionid";
+                            if($result = mysqli_query($link, $sql)){
+                                if(mysqli_num_rows($result) > 0){
+                                    while($row = mysqli_fetch_array($result)){
+                                    }
+                                }
+                                // Free result set
+                                mysqli_free_result($result);
+                            }
+                        ?>
 
                         <div id="container" class="table-responsive">
 
@@ -576,8 +591,13 @@ if($_SERVER["REQUEST_METHOD"] == "POST"){
 
                         <?php
                             //}
+                            if(isset($sourceid)) {
+                                $SubmitValue = "Save";
+                            } else {
+                                $SubmitValue = "Create";
+                            }
                         ?>
-                        <input type="submit" class="btn btn-primary" value="Create">
+                        <input type="submit" class="btn btn-primary" value="<?php echo $SubmitValue; ?>">
                         <a href="index.php" class="btn btn-secondary ml-2">Cancel</a>
                     </form>
                 </div>

@@ -31,7 +31,7 @@
                 <div class="col-md-12">
                     <div class="mb-3 clearfix">
                         <h2 class="pull-left">Dashboard</h2>
-                        <a href="addsubject.php" class="btn btn-success pull-right"><i class="fa fa-plus"></i> Add New Person</a>
+                        <a href="newsubject.php" class="btn btn-success pull-right"><i class="fa fa-plus"></i> Add New Person</a>
                     </div>
                     <div class="mb-3 mt-5 clearfix">
                     <h3 class="pull-left">New Research</h3>
@@ -112,6 +112,10 @@
                         </div>
 
 
+                    <div class="mt-5 mb-3 clearfix">
+                        <h3 class="">Edit/Enhance Source Information</h3>
+                        <a href="sources.php" title="Edit Source Information" data-toggle="tooltip" class="btn btn-warning"><i class="fa fa-pencil"></i> Go to Sources</a>
+                    </div>
                     <div class="mt-5 mb-3 clearfix">
                         <h3 class="">Analyze Previous Research</h3>    
                     </div>

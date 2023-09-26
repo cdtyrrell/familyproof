@@ -7,15 +7,16 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>View Record</title>
+    <title>Sources</title>
     <?php require_once "stylesheets.php"; ?>
 </head>
 <body>
+    <?php require_once "header.php"; ?>
     <div class="wrapper">
         <div class="container-fluid">
         <?php
         // Include config file
-        require_once "config.php";
+        require_once "config/config.php";
 
         $sql = "SELECT * FROM sources ORDER BY category, sourcedate";
             if($result = mysqli_query($link, $sql)) {
@@ -41,7 +42,7 @@
                         if(isset($researchlogid)) {
                             echo '<td><a href="researchlog.php?researchlogid='.$researchlogid.'&sourceid='.$row["id"].'" class="btn btn-info"><i class="fa fa-paperclip"></i> '.$row["id"].'</a></td>';
                         } else {
-                            echo '<td><a href="createsource.php?id='.$row["id"].'" class="btn btn-warning"><i class="fa fa-pencil"></i> '.$row["id"].'</a></td>';
+                            echo '<td><a href="newsource.php?id='.$row["id"].'" class="btn btn-warning"><i class="fa fa-pencil"></i> '.$row["id"].'</a></td>';
                         }
                         echo '<td>'.$row["category"].'</td>';
                         echo '<td>'.$row["citation"].'</td>';
