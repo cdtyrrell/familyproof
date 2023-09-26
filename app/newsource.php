@@ -90,12 +90,13 @@ if($_SERVER["REQUEST_METHOD"] == "POST"){
         }
 
         // Prepare an insert statement for info
-        $infosql = "INSERT INTO information (sourceid, subjectid, questionid, content) VALUES (";
+        $infosql = "INSERT INTO information (sourceid, subjectid, questionid, content) VALUES ";
         $persons = $questions = array();
         for ($p = 1; $p <= 10; $p++) {
             for ($h = 1; $h <= 20; $h++) {
                 if(trim($_POST["p".$p]) > 0 && trim($_POST["h".$h]) > 0) { 
                     if(substr($infosql, -1) == ")") $infosql .= ",";
+                    $infosql .= '(';
                     if(isset($sourceid)) {
                         $infosql .= $sourceid;
                     } else {
@@ -112,6 +113,14 @@ if($_SERVER["REQUEST_METHOD"] == "POST"){
         } else {
             //printf("Error: %s.\n", mysqli_stmt_error($result));
             echo "INSERT into `information` failed. " . $infosql;
+        }
+
+        // Insert new potential assertions (based on new subject-question pairings)
+        $evisql = "INSERT INTO assertions(subjectid, questionid) select distinct i.subjectid,i.questionid from information i where not exists (select * from assertions a where i.subjectid=a.subjectid and i.questionid=a.questionid)";
+        if($result = mysqli_query($link, $evisql)){
+            mysqli_free_result($result);        
+        } else {
+            echo "Unable to add new assertions.";
         }
 
         // Update evidence table
