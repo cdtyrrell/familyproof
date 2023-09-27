@@ -62,9 +62,9 @@ CREATE TABLE information (
     context ENUM('primary', 'secondary', 'indeterminable', 'unknown') NOT NULL DEFAULT 'unknown',
     created DATETIME DEFAULT CURRENT_TIMESTAMP,
     lastmodified DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-    FOREIGN KEY (sourceid) REFERENCES sources (id) ON DELETE RESTRICT ON UPDATE CASCADE,
-    FOREIGN KEY (subjectid) REFERENCES subjects (id) ON DELETE RESTRICT ON UPDATE CASCADE,
-    FOREIGN KEY (questionid) REFERENCES questions (id) ON DELETE RESTRICT ON UPDATE CASCADE
+    FOREIGN KEY (sourceid) REFERENCES sources (id),
+    FOREIGN KEY (subjectid) REFERENCES subjects (id),
+    FOREIGN KEY (questionid) REFERENCES questions (id)
 );
 
 CREATE TABLE assertions (
@@ -79,9 +79,9 @@ CREATE TABLE assertions (
     analysis TEXT,
     created DATETIME DEFAULT CURRENT_TIMESTAMP,
     lastmodified DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-    FOREIGN KEY (subjectid) REFERENCES subjects (id) ON DELETE RESTRICT ON UPDATE CASCADE,
-    FOREIGN KEY (relatedsubjectid) REFERENCES subjects (id) ON DELETE RESTRICT ON UPDATE CASCADE,
-    FOREIGN KEY (questionid) REFERENCES questions (id) ON DELETE RESTRICT ON UPDATE CASCADE
+    FOREIGN KEY (subjectid) REFERENCES subjects (id),
+    FOREIGN KEY (relatedsubjectid) REFERENCES subjects (id),
+    FOREIGN KEY (questionid) REFERENCES questions (id)
 );
 
 CREATE TABLE evidence (
@@ -92,8 +92,8 @@ CREATE TABLE evidence (
     created DATETIME DEFAULT CURRENT_TIMESTAMP,
     lastmodified DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
     PRIMARY KEY(informationid, assertionid),
-    FOREIGN KEY (informationid) REFERENCES information (id) ON DELETE RESTRICT ON UPDATE CASCADE,
-    FOREIGN KEY (assertionid) REFERENCES assertions (id) ON DELETE RESTRICT ON UPDATE CASCADE
+    FOREIGN KEY (informationid) REFERENCES information (id),
+    FOREIGN KEY (assertionid) REFERENCES assertions (id)
 );
 
 /* CREATE TABLE relationships (
@@ -125,15 +125,15 @@ CREATE TABLE researchlog (
     searchparams TEXT,
     created DATETIME DEFAULT CURRENT_TIMESTAMP,
     lastmodified DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-    FOREIGN KEY (assertionid) REFERENCES assertions (id) ON DELETE RESTRICT ON UPDATE CASCADE
+    FOREIGN KEY (assertionid) REFERENCES assertions (id)
 );
 
 CREATE TABLE researchlogentries (
     id INT NOT NULL PRIMARY KEY AUTO_INCREMENT,
     researchlogid INT NOT NULL,
     sourceid INT NOT NULL,
-    FOREIGN KEY (researchlogid) REFERENCES researchlog (id) ON DELETE RESTRICT ON UPDATE CASCADE,
-    FOREIGN KEY (sourceid) REFERENCES sources (id) ON DELETE RESTRICT ON UPDATE CASCADE
+    FOREIGN KEY (researchlogid) REFERENCES researchlog (id),
+    FOREIGN KEY (sourceid) REFERENCES sources (id)
 );
 
 CREATE TABLE sourcetemplates (

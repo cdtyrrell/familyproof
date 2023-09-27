@@ -90,13 +90,19 @@ if($_SERVER["REQUEST_METHOD"] == "POST"){
         }
 
         // Prepare an insert statement for info
-        $infosql = "INSERT INTO information (sourceid, subjectid, questionid, content) VALUES ";
+        //$infosql = "SET FOREIGN_KEY_CHECKS = 0;";
+        $infosql = "REPLACE INTO information (id, sourceid, subjectid, questionid, content) VALUES ";
         $persons = $questions = array();
         for ($p = 1; $p <= 10; $p++) {
             for ($h = 1; $h <= 20; $h++) {
                 if(trim($_POST["p".$p]) > 0 && trim($_POST["h".$h]) > 0) { 
                     if(substr($infosql, -1) == ")") $infosql .= ",";
                     $infosql .= '(';
+                    if(trim($_POST["id".$p."-".$h]) != '') {
+                        $infosql .= trim($_POST["id".$p."-".$h]) . ", ";
+                    } else {
+                        $infosql .= "NULL, ";
+                    }
                     if(isset($sourceid)) {
                         $infosql .= $sourceid;
                     } else {
@@ -108,10 +114,12 @@ if($_SERVER["REQUEST_METHOD"] == "POST"){
                 }
             }
         }
+        //$infosql .= ";SET FOREIGN_KEY_CHECKS = 1;";
+        //$infosql .= "ON DUPLICATE KEY UPDATE sourceid = ".$sourceid.", subjectid = ".$subjectid.", questionid = ".$questionid.", content = '".trim($_POST[$p."-".$h]."'";
         if($result = mysqli_query($link, $infosql)){
             mysqli_free_result($result);
         } else {
-            //printf("Error: %s.\n", mysqli_stmt_error($result));
+            printf("Error: %s.\n", mysqli_stmt_error($result));
             echo "INSERT into `information` failed. " . $infosql;
         }
 
@@ -305,10 +313,10 @@ if($_SERVER["REQUEST_METHOD"] == "POST"){
 
                         <?php
                         if(isset($sourceid)){
-                            $sql = "SELECT subjectid, questionid, content FROM information WHERE sourceid = ". $sourceid ." ORDER BY subjectid, questionid";
+                            $sql = "SELECT id, subjectid, questionid, content FROM information WHERE sourceid = ". $sourceid ." ORDER BY subjectid, questionid";
                             if($result = mysqli_query($link, $sql)){
                                 if(mysqli_num_rows($result) > 0){
-                                    $infoArr = array(array());
+                                    $infoArr = $idArr = array(array());
                                     $skeys = $qkeys = array();
                                     $subject = $question = '';
                                     while($row = mysqli_fetch_array($result)){
@@ -321,6 +329,7 @@ if($_SERVER["REQUEST_METHOD"] == "POST"){
                                             $qkeys[] = $question;
                                         }
                                         $infoArr[$row['subjectid']][$row['questionid']] = $row['content'];
+                                        $idArr[$row['subjectid']][$row['questionid']] = $row['id'];
                                     }
                                 }
                                 // Free result set
@@ -349,9 +358,11 @@ if($_SERVER["REQUEST_METHOD"] == "POST"){
                                     echo '<td><select class="form-control" id="p'.$s.'" name="p'.$s.'">'.$personsdropdown.'</td>';
                                     for($q = 1; $q < 21; $q++) {
                                         if(count($skeys) >= $s && count($qkeys) >= $q){
-                                            echo '<td><input type="text" class="form-control" name="'.$s.'-'.$q.'" value="'.$infoArr[$skeys[$s-1]][$qkeys[$q-1]].'"></td>';
+                                            echo '<td><input type="text" class="form-control" name="'.$s.'-'.$q.'" value="'.$infoArr[$skeys[$s-1]][$qkeys[$q-1]].'">';
+                                            echo '<input type="hidden" name="id'.$s.'-'.$q.'" value="'.$idArr[$skeys[$s-1]][$qkeys[$q-1]].'"></td>';
                                         } else {
                                             echo '<td><input type="text" class="form-control" name="'.$s.'-'.$q.'"></td>';
+                                            echo '<input type="hidden" name="id'.$s.'-'.$q.'" value=""></td>';
                                         }
                                     }
                                     echo '</tr>';
