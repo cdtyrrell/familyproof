@@ -114,7 +114,7 @@
 
                     <div class="mt-5 mb-3 clearfix">
                         <h3 class="">Edit/Enhance Source Information</h3>
-                        <a href="sources.php" title="Edit Source Information" data-toggle="tooltip" class="btn btn-warning"><i class="fa fa-pencil"></i> Go to Sources</a>
+                        <a href="sources.php" title="Edit Source Information" data-toggle="tooltip" class="btn btn-primary"><i class="fa fa-files-o"></i> Go to Sources</a>
                     </div>
                     <div class="mt-5 mb-3 clearfix">
                         <h3 class="">Analyze Previous Research</h3>    
