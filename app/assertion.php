@@ -209,11 +209,11 @@ if(isset($_POST["id"]) && !empty($_POST["id"])){
                                             echo "<td>" . $row['citation'] . "</td>";
                                             echo "<td>" . $row['sourcedate'] . "</td>";
                                         }
-                                        if($row['content'] == $previouscontent) {
-                                            echo '<td>"</td>';
-                                        } else {
+                                        //if($row['content'] == $previouscontent) {
+                                        //    echo '<td>"</td>';
+                                        //} else {
                                             echo "<td>" . $row['content'] . "</td>";
-                                        }
+                                        //}
                                         echo "<td>" . $row['provenance'] . "</td>";
                                         echo "<td>" . $row['context'] . "</td>";
 

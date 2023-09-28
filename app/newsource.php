@@ -96,21 +96,23 @@ if($_SERVER["REQUEST_METHOD"] == "POST"){
         for ($p = 1; $p <= 10; $p++) {
             for ($h = 1; $h <= 20; $h++) {
                 if(trim($_POST["p".$p]) > 0 && trim($_POST["h".$h]) > 0) { 
-                    if(substr($infosql, -1) == ")") $infosql .= ",";
-                    $infosql .= '(';
                     if(trim($_POST["id".$p."-".$h]) != '') {
-                        $infosql .= trim($_POST["id".$p."-".$h]) . ", ";
-                    } else {
-                        $infosql .= "NULL, ";
+                        if(substr($infosql, -1) == ")") $infosql .= ",";
+                        $infosql .= '(';
+                        if(trim($_POST["id".$p."-".$h]) != '') {
+                            $infosql .= trim($_POST["id".$p."-".$h]) . ", ";
+                        } else {
+                            $infosql .= "NULL, ";
+                        }
+                        if(isset($sourceid)) {
+                            $infosql .= $sourceid;
+                        } else {
+                            $infosql .= $newid;
+                        }
+                        $infosql .= ", " . trim($_POST["p".$p]) . ", " . trim($_POST["h".$h]) . ", '" . trim($_POST[$p."-".$h]) . "')";
+                        $persons[] = trim($_POST["p".$p]);
+                        $questions[] = trim($_POST["h".$h]);
                     }
-                    if(isset($sourceid)) {
-                        $infosql .= $sourceid;
-                    } else {
-                        $infosql .= $newid;
-                    }
-                    $infosql .= ", " . trim($_POST["p".$p]) . ", " . trim($_POST["h".$h]) . ", '" . trim($_POST[$p."-".$h]) . "')";
-                    $persons[] = trim($_POST["p".$p]);
-                    $questions[] = trim($_POST["h".$h]);
                 }
             }
         }

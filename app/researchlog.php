@@ -116,7 +116,7 @@ require_once "config/config.php";
             }
         } else {
 // 5. load with $_GET(pid && tid)
-//    This condition arises from all call that includes a _p_erson and question(_t_opic)
+//    This condition arises from all calls that includes a _p_erson and question(_t_opic)
 //    and triggers a search for an exisiting researchlog record matiching those criteria.
 //    If: 0 none --> see mode 6 [below]
 //        1 one ---> resolve the researchlog id, reload page
