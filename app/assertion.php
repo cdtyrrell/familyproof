@@ -31,22 +31,20 @@ if(isset($_POST["id"]) && !empty($_POST["id"])){
         // Attempt to execute the prepared statement
         if(mysqli_stmt_execute($stmt)){
             // Records updated successfully. Redirect to landing page
-            $Qsql = $Asql = '';
+            $sql = '';
             foreach($infoidarr as $i) {
                 $eviQ = $_POST["EviQ".$i];
                 $eviA = $_POST["EviA".$i];
-                $Qsql .= 'WHEN assertionid = ' . $id . ' AND informationid = ' . $i . ' THEN "'. $eviQ . '" ';
-                $Asql .= 'WHEN assertionid = ' . $id . ' AND informationid = ' . $i . ' THEN "'. $eviA . '" ';
+                $sql .= "UPDATE evidence SET assessment = '".$eviA."', quality = '".$eviQ."' WHERE assertionid = ".$id." AND informationid = ".$i."; ";
             }
-            $tql = "UPDATE evidence SET assessment = CASE " . $Asql . " END, quality = CASE " . $Qsql . " END WHERE assertionid = " . $id . " AND informationid IN (" . implode(",", $infoidarr) . ")";
-            if($result = mysqli_query($link, $tql)){
+            if($result = mysqli_multi_query($link, $sql)){
                 header("location: assertion.php?id=" . $id);
                 exit();
             } else {
-                echo "Ope! Something went wrong.";
+                echo "Evidence replace failed: " . $sql;
             }
         } else {
-            echo "Ope! Something went wrong.";
+            echo "Assertions update failed: " . mysqli_stmt_error($stmt);
         }
     } 
     mysqli_stmt_close($stmt);
@@ -83,7 +81,7 @@ if(isset($_POST["id"]) && !empty($_POST["id"])){
                 $assertiondisplaytable = '<div class="alert alert-danger"><em>Missing assertion identifier.</em></div>';
             }
         } else{
-            $assertiondisplaytable = "Ope! Something went wrong.";
+            $assertiondisplaytable = "Assertion display table failed.";
         }
 
         // Load parties
@@ -236,7 +234,7 @@ if(isset($_POST["id"]) && !empty($_POST["id"])){
                             echo '<div class="alert alert-danger"><em>No evidence found!</em></div>';
                         }
                     } else{
-                        echo "Ope! Something went wrong. Please try again later.";
+                        echo "Select/join failed.";
                     }
                     // Close connection
                     mysqli_close($link);

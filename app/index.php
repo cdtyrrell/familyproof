@@ -31,11 +31,11 @@
                 <div class="col-md-12">
                     <div class="mb-3 clearfix">
                         <h2 class="pull-left">Dashboard</h2>
-                        <a href="newsubject.php" class="btn btn-success pull-right"><i class="fa fa-plus"></i> Add New Person</a>
+                        <a href="newsubject.php" class="btn btn-primary pull-right"><i class="fa fa-plus"></i> Add New Person</a>
                     </div>
                     <div class="mb-3 mt-5 clearfix">
                     <h3 class="pull-left">New Research</h3>
-                    <a href="addquestion.php" class="btn btn-success pull-right"><i class="fa fa-plus"></i> Add New Question</a>
+                    <a href="addquestion.php" class="btn btn-primary pull-right"><i class="fa fa-plus"></i> Add New Question</a>
                     </div>
 
                     <div class="row">
@@ -82,7 +82,7 @@
                         ?>
                     </div>
                     <div class="form-group">
-                        <button type="button" id="gobtn" class="btn btn-primary" onclick="goButton()"><i class="fa fa-book"></i> Go to Research Log</button>
+                        <button type="button" id="gobtn" class="btn btn-info" onclick="goButton()"><i class="fa fa-book"></i> Go to Research Log</button>
                     </div>
 
                     <div class="mt-5 mb-3 clearfix">
@@ -114,46 +114,109 @@
 
                     <div class="mt-5 mb-3 clearfix">
                         <h3 class="">Edit/Enhance Source Information</h3>
-                        <a href="sources.php" title="Edit Source Information" data-toggle="tooltip" class="btn btn-primary"><i class="fa fa-files-o"></i> Go to Sources</a>
+                        <a href="sources.php" title="Edit Source Information" data-toggle="tooltip" class="btn btn-info"><i class="fa fa-files-o"></i> Go to Sources</a>
                     </div>
                     <div class="mt-5 mb-3 clearfix">
                         <h3 class="">Analyze Previous Research</h3>    
                     </div>
 
                     <?php
-                    $sql = "SELECT a.id, t.question, a.lastmodified, p.person FROM assertions a JOIN subjects p ON a.subjectid = p.id JOIN questions t ON a.questionid = t.id WHERE a.assertionstatus = 'needs-review' ORDER BY a.lastmodified DESC";
+
+                    $sql = "SELECT DISTINCT person FROM subjects ORDER BY person";
+                    $individuals = array();
                     if($result = mysqli_query($link, $sql)){
                         if(mysqli_num_rows($result) > 0){
-                            echo '<table class="table table-bordered table-striped table-sm">';
-                                echo "<thead>";
-                                    echo "<tr>";
-                                        echo "<th>Name</th>";
-                                        echo "<th>Event</th>";
-                                        echo "<th>Last Updated</th>";
-                                        echo "<th>Analyze</th>";
-                                    echo "</tr>";
-                                echo "</thead>";
-                                echo "<tbody>";
                             while($row = mysqli_fetch_array($result)){
-                                echo "<tr>";
-                                    echo "<td>" . $row['person'] . "</td>";
-                                    echo "<td>" . $row['question'] . "</td>";
-                                    echo "<td>" . $row['lastmodified'] . "</td>";
-                                    echo "<td>";
-                                        echo '<a href="assertion.php?id='. $row['id'] .'" title="Review" data-toggle="tooltip" class="btn btn-warning"><i class="fa fa-pencil"></i> Review</a>';
-                                    echo "</td>";
-                                echo "</tr>";
+                                $individuals[] = $row['person'];
                             }
-                            echo "</tbody>";                            
-                        echo "</table>";
-                        // Free result set
-                        mysqli_free_result($result);
-                        } else{
-                            echo '<div class="alert alert-danger"><em>No unreviewed research found.</em></div>';
                         }
-                    } else{
-                        echo "Ope! Something went wrong. Please try again later.";
                     }
+
+                    $sql = "SELECT a.id, t.question, a.lastmodified, p.person, a.assertionstatus FROM assertions a JOIN subjects p ON a.subjectid = p.id JOIN questions t ON a.questionid = t.id ORDER BY p.person, t.question"; //WHERE a.assertionstatus = 'needs-review'
+
+                    echo '<div class="accordion" id="accordionPreviousResearch">';
+                    $indivTracker = '';
+                    $startFlag = $accCounter = 0;
+                    if($result = mysqli_query($link, $sql)){
+                      if(mysqli_num_rows($result) > 0){
+                        while($row = mysqli_fetch_array($result)){
+                          if($indivTracker != $row['person']) { 
+                            $indivTracker = $row['person'];
+                            if($startFlag) {
+                              echo "</tbody></table></div></div></div>";
+                            }
+                            echo '<div class="card">';
+                            echo '<div class="card-header" id="heading'.$accCounter.'">';
+                            echo '<h2 class="mb-0">';
+                            echo '<button class="btn btn-link btn-block text-left" type="button" data-toggle="collapse" data-target="#collapse'.$accCounter.'" aria-expanded="true" aria-controls="collapse'.$accCounter.'">';
+                            echo $indivTracker;
+                            echo '</button>';
+                            echo '</h2></div>';
+                            echo '<div id="collapse'.$accCounter.'" class="collapse" aria-labelledby="heading'.$accCounter.'" data-parent="#accordionPreviousResearch">';
+                            echo '<div class="accordion-body">';
+                            echo '<table class="table table-bordered table-striped table-sm">';
+                            echo "<thead>";
+                            echo "<tr>";
+                            echo "<th>Name</th>";
+                            echo "<th>Event</th>";
+                            echo "<th>Last Updated</th>";
+                            echo "<th>Analysis</th>";
+                            echo "</tr>";
+                            echo "</thead>";
+                            echo "<tbody>";
+                          }
+                          echo "<tr>";
+                          echo "<td>" . $row['person'] . "</td>";
+                          echo "<td>" . $row['question'] . "</td>";
+                          echo "<td>" . $row['lastmodified'] . "</td>";
+                          if($row['assertionstatus'] == 'analyzed') {
+                            echo '<td><a href="assertion.php?id='. $row["id"] .'" title="Reanalyze" data-toggle="tooltip" class="btn btn-success"><i class="fa fa-check"></i> Done</a></td>';
+                          } else {
+                            echo '<td><a href="assertion.php?id='. $row["id"] .'" title="Review" data-toggle="tooltip" class="btn btn-warning"><i class="fa fa-pencil"></i> Review</a></td>';
+                          }
+                          echo "</tr>";
+                          $startFlag = 1;
+                          $accCounter++;
+                        }
+                      } else{
+                        echo '<div class="alert alert-danger"><em>No unreviewed research found.</em></div>';
+                      }
+                      mysqli_free_result($result);
+                    }
+                    echo '</div>';
+
+                    // if($result = mysqli_query($link, $sql)){
+                    //     if(mysqli_num_rows($result) > 0){
+                    //         echo '<table class="table table-bordered table-striped table-sm">';
+                    //             echo "<thead>";
+                    //                 echo "<tr>";
+                    //                     echo "<th>Name</th>";
+                    //                     echo "<th>Event</th>";
+                    //                     echo "<th>Last Updated</th>";
+                    //                     echo "<th>Analyze</th>";
+                    //                 echo "</tr>";
+                    //             echo "</thead>";
+                    //             echo "<tbody>";
+                    //         while($row = mysqli_fetch_array($result)){
+                    //             echo "<tr>";
+                    //                 echo "<td>" . $row['person'] . "</td>";
+                    //                 echo "<td>" . $row['question'] . "</td>";
+                    //                 echo "<td>" . $row['lastmodified'] . "</td>";
+                    //                 echo "<td>";
+                    //                     echo '<a href="assertion.php?id='. $row['id'] .'" title="Review" data-toggle="tooltip" class="btn btn-warning"><i class="fa fa-pencil"></i> Review</a>';
+                    //                 echo "</td>";
+                    //             echo "</tr>";
+                    //         }
+                    //         echo "</tbody>";                            
+                    //     echo "</table>";
+                    //     // Free result set
+                    //     mysqli_free_result($result);
+                    //     } else{
+                    //         echo '<div class="alert alert-danger"><em>No unreviewed research found.</em></div>';
+                    //     }
+                    // } else{
+                    //     echo "Ope! Something went wrong. Please try again later.";
+                    // }
                     // Close connection
                     mysqli_close($link);
                     ?>

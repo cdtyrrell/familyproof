@@ -49,7 +49,7 @@ alt:
 */
 
 INSERT INTO questions (question, questiontype) VALUES ('Name/Known As','descriptive'),('Residence','vital'),('Birth','vital'),('Marriage','relationship'),('Death','vital'),('Sex','descriptive'),
-('Burial','biographical'),('Baptism','biographical'),('Child','relationship'),('Adoption','relationship'),('Divorce','relationship'),('Engagement','relationship'),('Degree','biographical'),('Will','biographical'),('Probate','biographical'),('Religion','biographical'),('Deed','biographical'),
+('Burial','biographical'),('Baptism','biographical'),('Child of','relationship'),('Adoption','relationship'),('Divorce','relationship'),('Engagement','relationship'),('Degree','biographical'),('Will','biographical'),('Probate','biographical'),('Religion','biographical'),('Deed','biographical'),
 ('Naturalization','biographical'),('Immigration','biographical'),('Cause of Death','biographical'),('Occupation','biographical'),('Retirement','biographical');
 
 CREATE TABLE information (
