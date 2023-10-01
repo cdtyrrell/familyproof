@@ -42,7 +42,7 @@
                         if(isset($researchlogid)) {
                             echo '<td><a href="researchlog.php?researchlogid='.$researchlogid.'&sourceid='.$row["id"].'" class="btn btn-info"><i class="fa fa-paperclip"></i> '.$row["id"].'</a></td>';
                         } else {
-                            echo '<td><a href="newsource.php?id='.$row["id"].'" class="btn btn-warning"><i class="fa fa-pencil"></i> '.$row["id"].'</a></td>';
+                            echo '<td><a href="source.php?id='.$row["id"].'" class="btn btn-warning"><i class="fa fa-pencil"></i> '.$row["id"].'</a></td>';
                         }
                         echo '<td>'.$row["category"].'</td>';
                         echo '<td>'.$row["citation"].'</td>';

@@ -227,7 +227,7 @@ require_once "config/config.php";
         });
 
         function addNewSource($id) {
-            window.location.href = "newsource.php?researchlogid=" + $id;
+            window.location.href = "source.php?researchlogid=" + $id;
         }
     </script>
 </head>

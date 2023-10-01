@@ -16,8 +16,11 @@ if(isset($_POST["id"]) && !empty($_POST["id"])){
     $infoidarr = explode(" ", trim($_POST["infoidarr"]));
 
     // Prepare an update statement
-    $sql = "UPDATE assertions SET assertionstatus='analyzed', conclusion=?, relatedsubjectid=?, dateoccurred=?, place=?, analysis=? WHERE id=?";
-        
+    if($consolidatedinfo != '' && $analysis != '') {
+        $sql = "UPDATE assertions SET assertionstatus='analyzed', conclusion=?, relatedsubjectid=?, dateoccurred=?, place=?, analysis=? WHERE id=?";
+    } else {
+        $sql = "UPDATE assertions SET conclusion=?, relatedsubjectid=?, dateoccurred=?, place=?, analysis=? WHERE id=?";
+    }
     if($stmt = mysqli_prepare($link, $sql)){
         // Bind variables to the prepared statement as parameters
         mysqli_stmt_bind_param($stmt, "sisssi", $p_consolidatedinfo, $p_associatedperson, $p_date, $p_place, $p_analysis, $p_id);

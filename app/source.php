@@ -116,8 +116,6 @@ if($_SERVER["REQUEST_METHOD"] == "POST"){
                 }
             }
         }
-        //$infosql .= ";SET FOREIGN_KEY_CHECKS = 1;";
-        //$infosql .= "ON DUPLICATE KEY UPDATE sourceid = ".$sourceid.", subjectid = ".$subjectid.", questionid = ".$questionid.", content = '".trim($_POST[$p."-".$h]."'";
         if($result = mysqli_query($link, $infosql)){
             mysqli_free_result($result);
         } else {
@@ -322,20 +320,16 @@ if($_SERVER["REQUEST_METHOD"] == "POST"){
                                     $skeys = $qkeys = array();
                                     $subject = $question = '';
                                     while($row = mysqli_fetch_array($result)){
-                                        if($subject != $row['subjectid']){
-                                            $subject = $row['subjectid'];
-                                            $skeys[] = $subject;
-                                        }
-                                        if($question != $row['questionid']){
-                                            $question = $row['questionid'];
-                                            $qkeys[] = $question;
-                                        }
+                                        $skeys[] = $row['subjectid'];
+                                        $qkeys[] = $row['questionid'];
                                         $infoArr[$row['subjectid']][$row['questionid']] = $row['content'];
                                         $idArr[$row['subjectid']][$row['questionid']] = $row['id'];
                                     }
                                 }
                                 // Free result set
                                 mysqli_free_result($result);
+                                $skeys = array_values(array_unique($skeys, SORT_NUMERIC));
+                                $qkeys = array_values(array_unique($qkeys, SORT_NUMERIC));
                             }
                         }
                         ?>
@@ -363,7 +357,7 @@ if($_SERVER["REQUEST_METHOD"] == "POST"){
                                             echo '<td><input type="text" class="form-control" name="'.$s.'-'.$q.'" value="'.$infoArr[$skeys[$s-1]][$qkeys[$q-1]].'">';
                                             echo '<input type="hidden" name="id'.$s.'-'.$q.'" value="'.$idArr[$skeys[$s-1]][$qkeys[$q-1]].'"></td>';
                                         } else {
-                                            echo '<td><input type="text" class="form-control" name="'.$s.'-'.$q.'"></td>';
+                                            echo '<td><input type="text" class="form-control" name="'.$s.'-'.$q.'">';
                                             echo '<input type="hidden" name="id'.$s.'-'.$q.'" value=""></td>';
                                         }
                                     }
