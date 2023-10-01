@@ -9,7 +9,7 @@ if(isset($_POST["id"]) && !empty($_POST["id"])){
     // Get input values
     $id = $_POST["id"];
     $consolidatedinfo = trim($_POST["consolidatedinfo"]);
-    $associatedperson = trim($_POST["associatedperson"]);
+    $associatedindividual = trim($_POST["associatedindividual"]);
     $date = trim($_POST["date"]);
     $place = trim($_POST["place"]);
     $analysis = trim($_POST["analysis"]);
@@ -23,11 +23,11 @@ if(isset($_POST["id"]) && !empty($_POST["id"])){
     }
     if($stmt = mysqli_prepare($link, $sql)){
         // Bind variables to the prepared statement as parameters
-        mysqli_stmt_bind_param($stmt, "sisssi", $p_consolidatedinfo, $p_associatedperson, $p_date, $p_place, $p_analysis, $p_id);
+        mysqli_stmt_bind_param($stmt, "sisssi", $p_consolidatedinfo, $p_associatedindividual, $p_date, $p_place, $p_analysis, $p_id);
         // Set parameters
         $p_id = $id;
         $p_consolidatedinfo = $consolidatedinfo;
-        $p_associatedperson = $associatedperson;
+        $p_associatedindividual = $associatedindividual;
         $p_date = $date;
         $p_place = $place;
         $p_analysis = $analysis;        
@@ -62,7 +62,7 @@ if(isset($_POST["id"]) && !empty($_POST["id"])){
         $sql = "SELECT p.person, q.question, a.assertionstatus, a.conclusion, a.relatedsubjectid, a.dateoccurred, a.place, a.analysis FROM assertions a JOIN subjects p ON a.subjectid = p.id JOIN questions q ON a.questionid = q.id WHERE a.id = " . $id;
         if($result = mysqli_query($link, $sql)){
             if(mysqli_num_rows($result) == 1){
-                $assertiondisplaytable = '<table class="table table-bordered table-striped"><thead><tr><th>#</th><th>Person</th><th>Event/Fact</th><th>Status</th></tr></thead><tbody>';
+                $assertiondisplaytable = '<table class="table table-bordered table-striped"><thead><tr><th>#</th><th>Individual</th><th>Event/Fact</th><th>Status</th></tr></thead><tbody>';
                     while($row = mysqli_fetch_array($result)){
                         $assertiondisplaytable .= "<tr><td>" . $id . "</td><td>" . $row['person'] . "</td><td>" . $row['question'] . "</td>";
                         if($row['assertionstatus'] == "analyzed"){
@@ -72,7 +72,7 @@ if(isset($_POST["id"]) && !empty($_POST["id"])){
                         }
                         $assertiondisplaytable .= "</tr>";
                         $consolidatedinfo = $row['conclusion'];
-                        $associatedperson = $row['relatedsubjectid'];
+                        $associatedindividual = $row['relatedsubjectid'];
                         $date = $row['dateoccurred'];
                         $place = $row['place'];
                         $analysis = $row['analysis'];
@@ -91,19 +91,19 @@ if(isset($_POST["id"]) && !empty($_POST["id"])){
         $sql = "SELECT id, person FROM subjects ORDER BY presumedname, presumeddates";
         if($result = mysqli_query($link, $sql)){
             if(mysqli_num_rows($result) > 0){
-                $personsdropdown .= '<select class="form-control" name="associatedperson"><option value="0"></option>';
+                $individualsdropdown .= '<select class="form-control" name="associatedindividual"><option value="0"></option>';
                 while($row = mysqli_fetch_array($result)){
-                    if($row["id"] == $associatedperson) {
-                        $personsdropdown .= '<option selected value="' . $row["id"] . '">' . $row['person'] . '</option>';
+                    if($row["id"] == $associatedindividual) {
+                        $individualsdropdown .= '<option selected value="' . $row["id"] . '">' . $row['person'] . '</option>';
                     } else {
-                        $personsdropdown .= '<option value="' . $row["id"] . '">' . $row['person'] . '</option>';
+                        $individualsdropdown .= '<option value="' . $row["id"] . '">' . $row['person'] . '</option>';
                     }
                 }
-                $personsdropdown .= "</select>";
+                $individualsdropdown .= "</select>";
                 // Free result set
                 mysqli_free_result($result);
             } else {
-                $personsdropdown = '<div class="alert alert-danger"><em>No parties found.</em></div>';
+                $individualsdropdown = '<div class="alert alert-danger"><em>No parties found.</em></div>';
             }
         }
     }
@@ -154,8 +154,8 @@ if(isset($_POST["id"]) && !empty($_POST["id"])){
                                 <input type="text" name="consolidatedinfo" class="form-control" value="<?php echo $consolidatedinfo; ?>">
                             </div>
                             <div class="form-group col-sm-4">
-                                <label>Associated Person</label>
-                                <?php echo $personsdropdown; ?> <!-- associatedperson -->
+                                <label>Associated Individual</label>
+                                <?php echo $individualsdropdown; ?> <!-- associatedindividual -->
                             </div>
                         </div>
                         <div class="row">
@@ -179,7 +179,7 @@ if(isset($_POST["id"]) && !empty($_POST["id"])){
 
                     <div class="mb-3 clearfix">
                         <h2 class="pull-left">Evidence</h2>
-                        <a href="newsubject.php" class="btn btn-success pull-right"><i class="fa fa-plus"></i> Connect Other Information</a>
+                        <a href="individual.php" class="btn btn-success pull-right"><i class="fa fa-plus"></i> Connect Other Information</a>
                     </div>
 
                     <?php

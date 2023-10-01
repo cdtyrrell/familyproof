@@ -49,7 +49,7 @@ require_once "config/config.php";
                 mysqli_free_result($result);
                 $assertionid = $row['aid'];
                 $logtablehtml = '<a href="researchlog.php?pid='.$row["pid"].'&tid='.$row["qid"].'&new=1" class="btn btn-success pull-right"><i class="fa fa-plus"></i> Start New Log with Same Question</a></div>';
-                $logtablehtml .= '<table class="table table-bordered table-striped"><thead><tr><th class="w-50">Person</th><th class="w-50">Event/Fact</th></tr></thead>';
+                $logtablehtml .= '<table class="table table-bordered table-striped"><thead><tr><th class="w-50">Individual</th><th class="w-50">Event/Fact</th></tr></thead>';
                 $logtablehtml .= "<tbody><tr><td>" . $row['person'] . "</td><td>" . $row['question'] . "</td></tr></tbody></table>";
                 $logformhtml = '<form action="' . htmlspecialchars($_SERVER["PHP_SELF"]) . '" method="post"><input type="hidden" name="researchlogid" value="'.$researchlogid.'">';
         
@@ -144,7 +144,7 @@ require_once "config/config.php";
                             mysqli_data_seek($result, 0);
                             $logformhtml = '';
                             $logtablehtml = '<a href="researchlog.php?pid='.$row["pid"].'&tid='.$row["qid"].'&new=1" class="btn btn-success pull-right"><i class="fa fa-plus"></i> Start New Log with Same Question</a></div>';  
-                            $logtablehtml .= '<table class="table table-bordered table-striped"><thead><tr><th>Person</th><th>Event/Fact</th><th>Choose:</th></tr></thead><tbody>';
+                            $logtablehtml .= '<table class="table table-bordered table-striped"><thead><tr><th>Individual</th><th>Event/Fact</th><th>Choose:</th></tr></thead><tbody>';
                                 while($row = mysqli_fetch_array($result)){
                                     $rid = $row['id'];
                                     $logtablehtml .= "<tr><td>" . $row['person'] . "</td><td>" . $row['question'] . "</td>";

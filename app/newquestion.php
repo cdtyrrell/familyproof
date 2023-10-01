@@ -71,7 +71,7 @@ if($_SERVER["REQUEST_METHOD"] == "POST"){
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Add a Person</title>
+    <title>Add Individual</title>
     <?php require_once "stylesheets.php"; ?>
 </head>
 <body>
@@ -80,7 +80,7 @@ if($_SERVER["REQUEST_METHOD"] == "POST"){
         <div class="container-fluid">
             <div class="row">
                 <div class="col-md-12">
-                    <h2 class="mt-5">Create New Person</h2>
+                    <h2 class="mt-5">Create New Individual</h2>
                     <p></p>
                     <form action="<?php echo htmlspecialchars($_SERVER["PHP_SELF"]); ?>" method="post">
                         <div class="form-group">

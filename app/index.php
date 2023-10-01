@@ -31,7 +31,7 @@
                 <div class="col-md-12">
                     <div class="mb-3 clearfix">
                         <h2 class="pull-left">Dashboard</h2>
-                        <a href="newsubject.php" class="btn btn-primary pull-right"><i class="fa fa-plus"></i> Add New Person</a>
+                        <a href="individual.php" class="btn btn-primary pull-right"><i class="fa fa-plus"></i> Add New Individual</a>
                     </div>
                     <div class="mb-3 mt-5 clearfix">
                     <h3 class="pull-left">New Research</h3>
@@ -46,14 +46,14 @@
                         $sql = "SELECT id, person FROM subjects ORDER BY presumedname, presumeddates";
                         if($result = mysqli_query($link, $sql)){
                             if(mysqli_num_rows($result) > 0){
-                                $personsdropdown = '<div class="form-group col-md-6">';
-                                $personsdropdown .= '<select id="who" class="form-control">';
+                                $individualsdropdown = '<div class="form-group col-md-6">';
+                                $individualsdropdown .= '<select id="who" class="form-control">';
                                 while($row = mysqli_fetch_array($result)){
-                                    $personsdropdown .= '<option value="' . $row["id"] . '">' . $row['person'] . '</option>';
+                                    $individualsdropdown .= '<option value="' . $row["id"] . '">' . $row['person'] . '</option>';
                                 }
-                                $personsdropdown .= "</select>";
-                                $personsdropdown .= "</div>";
-                                echo $personsdropdown;
+                                $individualsdropdown .= "</select>";
+                                $individualsdropdown .= "</div>";
+                                echo $individualsdropdown;
                                 // Free result set
                                 mysqli_free_result($result);
                             } else {
@@ -88,7 +88,7 @@
                     <div class="mt-5 mb-3 clearfix">
                         <h3 class="">View Completed Research</h3>
                     </div>
-                    <?php echo str_replace('id="who"', 'id="whoview"', $personsdropdown); ?>
+                    <?php echo str_replace('id="who"', 'id="whoview"', $individualsdropdown); ?>
 
                         <div class="pull-left mr-3">
                             <div class="form-group">

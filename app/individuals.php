@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Dashboard</title>
+    <title>individuals</title>
     <?php require_once "stylesheets.php"; ?>
     <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.1/dist/umd/popper.min.js"></script>
@@ -24,8 +24,8 @@
             <div class="row">
                 <div class="col-md-12">
                     <div class="mt-5 mb-3 clearfix">
-                        <h2 class="pull-left">Subjects</h2>
-                        <a href="newsubject.php" class="btn btn-success pull-right"><i class="fa fa-plus"></i> Add New Person</a>
+                        <h2 class="pull-left">Individuals</h2>
+                        <a href="individual.php" class="btn btn-success pull-right"><i class="fa fa-plus"></i> Add New Individual</a>
                     </div>
                     <?php
                     // Include config file

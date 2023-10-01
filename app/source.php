@@ -9,15 +9,15 @@ $category = $citation = $sourcedate = $provenance = "";
 $sql = "SELECT id, person FROM subjects ORDER BY presumedname, presumeddates";
 if($result = mysqli_query($link, $sql)){
     if(mysqli_num_rows($result) > 0){
-        $personsdropdown = '<option value="0"></option>';
+        $individualsdropdown = '<option value="0"></option>';
         while($row = mysqli_fetch_array($result)){
-            $personsdropdown .= '<option value="' . $row["id"] . '">' . $row['person'] . '</option>';
+            $individualsdropdown .= '<option value="' . $row["id"] . '">' . $row['person'] . '</option>';
         }
-        $personsdropdown .= "</select>";
+        $individualsdropdown .= "</select>";
         // Free result set
         mysqli_free_result($result);
     } else {
-        $personsdropdown = '<div class="alert alert-danger"><em>No parties found.</em></div>';
+        $individualsdropdown = '<div class="alert alert-danger"><em>No parties found.</em></div>';
     }
 }
 
@@ -92,7 +92,7 @@ if($_SERVER["REQUEST_METHOD"] == "POST"){
         // Prepare an insert statement for info
         //$infosql = "SET FOREIGN_KEY_CHECKS = 0;";
         $infosql = "REPLACE INTO information (id, sourceid, subjectid, questionid, content) VALUES ";
-        $persons = $questions = array();
+        $individuals = $questions = array();
         for ($p = 1; $p <= 10; $p++) {
             for ($h = 1; $h <= 20; $h++) {
                 if(trim($_POST["p".$p]) > 0 && trim($_POST["h".$h]) > 0) { 
@@ -110,7 +110,7 @@ if($_SERVER["REQUEST_METHOD"] == "POST"){
                             $infosql .= $newid;
                         }
                         $infosql .= ", " . trim($_POST["p".$p]) . ", " . trim($_POST["h".$h]) . ", '" . trim($_POST[$p."-".$h]) . "')";
-                        $persons[] = trim($_POST["p".$p]);
+                        $individuals[] = trim($_POST["p".$p]);
                         $questions[] = trim($_POST["h".$h]);
                     }
                 }
@@ -140,7 +140,7 @@ if($_SERVER["REQUEST_METHOD"] == "POST"){
         }
 
         // Update assertions table
-        $assql = "UPDATE assertions SET assertionstatus = 'needs-review' WHERE subjectid IN (" . implode(',', $persons) . ") AND questionid IN (" . implode(',', $questions) . ")";
+        $assql = "UPDATE assertions SET assertionstatus = 'needs-review' WHERE subjectid IN (" . implode(',', $individuals) . ") AND questionid IN (" . implode(',', $questions) . ")";
         if(!$result = mysqli_query($link, $assql)){
             echo "Unable to refresh assertions.";
         } else {
@@ -192,7 +192,7 @@ if($_SERVER["REQUEST_METHOD"] == "POST"){
         <div class="container-fluid">
             <div class="row">
                 <div class="col-md-12">
-                    <h2 class="mt-5">Add a Source</h2>
+                    <h2 class="mt-5">Add/Edit Source</h2>
                     <p></p>
                     <form action="<?php echo htmlspecialchars($_SERVER["PHP_SELF"]); ?>" method="post">
                         <?php
@@ -226,8 +226,8 @@ if($_SERVER["REQUEST_METHOD"] == "POST"){
                                         // Free result set
                                         mysqli_free_result($result);
 
-                                        echo '<label>Category</label>';
-                                        echo '<input type="text" name="cat" id="category" class="form-control" value="'.$category.'">';
+                                        //echo '<label>Category</label>';
+                                        //echo '<input type="text" name="cat" id="category" class="form-control" value="'.$category.'">';
 
                                     }
                                 } else {
@@ -318,7 +318,6 @@ if($_SERVER["REQUEST_METHOD"] == "POST"){
                                 if(mysqli_num_rows($result) > 0){
                                     $infoArr = $idArr = array(array());
                                     $skeys = $qkeys = array();
-                                    $subject = $question = '';
                                     while($row = mysqli_fetch_array($result)){
                                         $skeys[] = $row['subjectid'];
                                         $qkeys[] = $row['questionid'];
@@ -339,7 +338,7 @@ if($_SERVER["REQUEST_METHOD"] == "POST"){
                         <table class="table table-bordered table-striped table-sm table-responsive" style="width:3000px;">
                             <thead>
                                 <tr>
-                                    <th>Person</th>
+                                    <th>Individual</th>
                                     <?php
                                     for($q = 1; $q < 21; $q++) {
                                         echo '<th><select class="form-control" id="h'.$q.'" name="h'.$q.'"><'.$questionsdropdown.'</th>';
@@ -351,7 +350,7 @@ if($_SERVER["REQUEST_METHOD"] == "POST"){
                                 <?php 
                                 for($s = 1; $s < 11; $s++) {
                                     echo '<tr>';
-                                    echo '<td><select class="form-control" id="p'.$s.'" name="p'.$s.'">'.$personsdropdown.'</td>';
+                                    echo '<td><select class="form-control" id="p'.$s.'" name="p'.$s.'">'.$individualsdropdown.'</td>';
                                     for($q = 1; $q < 21; $q++) {
                                         if(count($skeys) >= $s && count($qkeys) >= $q){
                                             echo '<td><input type="text" class="form-control" name="'.$s.'-'.$q.'" value="'.$infoArr[$skeys[$s-1]][$qkeys[$q-1]].'">';
@@ -371,22 +370,6 @@ if($_SERVER["REQUEST_METHOD"] == "POST"){
                             echo '['.implode(",", $skeys).'].forEach((sval, idx) => { document.getElementById("p"+(idx+1)).value = sval });';
                             echo '['.implode(",", $qkeys).'].forEach((qval, indx) => { document.getElementById("h"+(indx+1)).value = qval });';
                             echo '</script>';
-                            /*for(){
-                                while($row = mysqli_fetch_array($result)){
-                                    echo "<tr>";
-                                        echo "<td>" . $id . "</td>";
-                                        echo "<td>" . $row['person'] . "</td>";
-                                        echo "<td>" . $row['eventname'] . "</td>";
-                                        if($row['assertionstatus'] == "analyzed"){
-                                            echo '<td class="table-success">Analyzed</td>';
-                                        } else {
-                                            echo '<td class="table-warning"><em>Needs Review</em></td>';
-                                        }
-                                    echo "</tr>";
-                                }
-                                echo "</tbody>";                            
-                            echo "</table>";
-                            */
                         ?>
 </div></div></div></div>
 
