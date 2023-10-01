@@ -3,33 +3,33 @@
 require_once $_SERVER['DOCUMENT_ROOT'] . "/config/config.php";
 
 function getArrayOfSubjects() {
-    $sql = "SELECT id, person FROM subjects ORDER BY presumedname, presumeddates";
+    $sql = "SELECT id, identifier FROM subjects ORDER BY presumedname, presumeddates";
     if($result = mysqli_query($link, $sql)){
         if(mysqli_num_rows($result) > 0){
-            $personsdropdown = '';
+            $individualsdropdown = '';
             while($row = mysqli_fetch_array($result)){
-                $personsdropdown .= '<option value="' . $row["id"] . '">' . $row['person'] . '</option>';
+                $individualsdropdown .= '<option value="' . $row["id"] . '">' . $row['identifier'] . '</option>';
             }
             mysqli_free_result($result);
         }
     } 
-    var_dump($personsdropdown);
+    var_dump($individualsdropdown);
     //return $subjectArr;
 }
 
 function SubjectDropdown() {
     $subjectArr = getArrayOfSubjects();
     if(count($subjectArr) > 0) {
-        $personsdropdown = '<div class="form-group col-md-6">';
-        $personsdropdown .= '<select id="who" class="form-control">';
-        foreach($subjectArr as $id => $person){
-            $personsdropdown .= '<option value="' . $id . '">' . $person . '</option>';
+        $individualsdropdown = '<div class="form-group col-md-6">';
+        $individualsdropdown .= '<select id="who" class="form-control">';
+        foreach($subjectArr as $id => $identifier){
+            $individualsdropdown .= '<option value="' . $id . '">' . $identifier . '</option>';
         }
-        $personsdropdown .= "</select>";
-        $personsdropdown .= "</div>";
+        $individualsdropdown .= "</select>";
+        $individualsdropdown .= "</div>";
         // Free result set
         mysqli_free_result($result);
-        echo $personsdropdown;
+        echo $individualsdropdown;
     } else {
         echo '<div class="alert alert-danger"><em>No parties were found.</em></div>';
     }

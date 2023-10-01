@@ -43,13 +43,13 @@
                         // Include config file
                         require_once "config/config.php";
                         
-                        $sql = "SELECT id, person FROM subjects ORDER BY presumedname, presumeddates";
+                        $sql = "SELECT id, identifier FROM subjects ORDER BY presumedname, presumeddates";
                         if($result = mysqli_query($link, $sql)){
                             if(mysqli_num_rows($result) > 0){
                                 $individualsdropdown = '<div class="form-group col-md-6">';
                                 $individualsdropdown .= '<select id="who" class="form-control">';
                                 while($row = mysqli_fetch_array($result)){
-                                    $individualsdropdown .= '<option value="' . $row["id"] . '">' . $row['person'] . '</option>';
+                                    $individualsdropdown .= '<option value="' . $row["id"] . '">' . $row['identifier'] . '</option>';
                                 }
                                 $individualsdropdown .= "</select>";
                                 $individualsdropdown .= "</div>";
@@ -122,17 +122,17 @@
 
                     <?php
 
-                    $sql = "SELECT DISTINCT person FROM subjects ORDER BY person";
+                    $sql = "SELECT DISTINCT identifier FROM subjects ORDER BY identifier";
                     $individuals = array();
                     if($result = mysqli_query($link, $sql)){
                         if(mysqli_num_rows($result) > 0){
                             while($row = mysqli_fetch_array($result)){
-                                $individuals[] = $row['person'];
+                                $individuals[] = $row['identifier'];
                             }
                         }
                     }
 
-                    $sql = "SELECT a.id, t.question, a.lastmodified, p.person, a.assertionstatus FROM assertions a JOIN subjects p ON a.subjectid = p.id JOIN questions t ON a.questionid = t.id ORDER BY p.person, t.question"; //WHERE a.assertionstatus = 'needs-review'
+                    $sql = "SELECT a.id, t.question, a.lastmodified, p.identifier, a.assertionstatus FROM assertions a JOIN subjects p ON a.subjectid = p.id JOIN questions t ON a.questionid = t.id ORDER BY p.identifier, t.question"; //WHERE a.assertionstatus = 'needs-review'
 
                     echo '<div class="accordion" id="accordionPreviousResearch">';
                     $indivTracker = '';
@@ -140,8 +140,8 @@
                     if($result = mysqli_query($link, $sql)){
                       if(mysqli_num_rows($result) > 0){
                         while($row = mysqli_fetch_array($result)){
-                          if($indivTracker != $row['person']) { 
-                            $indivTracker = $row['person'];
+                          if($indivTracker != $row['identifier']) { 
+                            $indivTracker = $row['identifier'];
                             if($startFlag) {
                               echo "</tbody></table></div></div></div>";
                             }
@@ -166,7 +166,7 @@
                             echo "<tbody>";
                           }
                           echo "<tr>";
-                          echo "<td>" . $row['person'] . "</td>";
+                          echo "<td>" . $row['identifier'] . "</td>";
                           echo "<td>" . $row['question'] . "</td>";
                           echo "<td>" . $row['lastmodified'] . "</td>";
                           if($row['assertionstatus'] == 'analyzed') {
@@ -185,38 +185,6 @@
                     }
                     echo '</div>';
 
-                    // if($result = mysqli_query($link, $sql)){
-                    //     if(mysqli_num_rows($result) > 0){
-                    //         echo '<table class="table table-bordered table-striped table-sm">';
-                    //             echo "<thead>";
-                    //                 echo "<tr>";
-                    //                     echo "<th>Name</th>";
-                    //                     echo "<th>Event</th>";
-                    //                     echo "<th>Last Updated</th>";
-                    //                     echo "<th>Analyze</th>";
-                    //                 echo "</tr>";
-                    //             echo "</thead>";
-                    //             echo "<tbody>";
-                    //         while($row = mysqli_fetch_array($result)){
-                    //             echo "<tr>";
-                    //                 echo "<td>" . $row['person'] . "</td>";
-                    //                 echo "<td>" . $row['question'] . "</td>";
-                    //                 echo "<td>" . $row['lastmodified'] . "</td>";
-                    //                 echo "<td>";
-                    //                     echo '<a href="assertion.php?id='. $row['id'] .'" title="Review" data-toggle="tooltip" class="btn btn-warning"><i class="fa fa-pencil"></i> Review</a>';
-                    //                 echo "</td>";
-                    //             echo "</tr>";
-                    //         }
-                    //         echo "</tbody>";                            
-                    //     echo "</table>";
-                    //     // Free result set
-                    //     mysqli_free_result($result);
-                    //     } else{
-                    //         echo '<div class="alert alert-danger"><em>No unreviewed research found.</em></div>';
-                    //     }
-                    // } else{
-                    //     echo "Ope! Something went wrong. Please try again later.";
-                    // }
                     // Close connection
                     mysqli_close($link);
                     ?>

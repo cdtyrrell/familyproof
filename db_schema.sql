@@ -19,7 +19,7 @@ CREATE TABLE subjects (
     presumedname VARCHAR(255) NOT NULL,
     presumedsex ENUM('male', 'female', 'non-binary', 'unknown') NOT NULL DEFAULT 'unknown',
     presumeddates VARCHAR(100),
-    person TEXT GENERATED ALWAYS AS (CONCAT(presumedname, '[', 
+    identifier TEXT GENERATED ALWAYS AS (CONCAT(presumedname, '[', 
         CASE
             WHEN presumedsex = 'male' THEN "M"
             WHEN presumedsex = 'female' THEN "F"

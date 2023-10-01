@@ -6,12 +6,12 @@ require_once "config/config.php";
 $category = $citation = $sourcedate = $provenance = "";
 
 // Load parties
-$sql = "SELECT id, person FROM subjects ORDER BY presumedname, presumeddates";
+$sql = "SELECT id, identifier FROM subjects ORDER BY presumedname, presumeddates";
 if($result = mysqli_query($link, $sql)){
     if(mysqli_num_rows($result) > 0){
         $individualsdropdown = '<option value="0"></option>';
         while($row = mysqli_fetch_array($result)){
-            $individualsdropdown .= '<option value="' . $row["id"] . '">' . $row['person'] . '</option>';
+            $individualsdropdown .= '<option value="' . $row["id"] . '">' . $row['identifier'] . '</option>';
         }
         $individualsdropdown .= "</select>";
         // Free result set

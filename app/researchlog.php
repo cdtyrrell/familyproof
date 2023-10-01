@@ -42,7 +42,7 @@ require_once "config/config.php";
             $getparams = trim($_GET["newparams"]);
             $getdate = trim($_GET["date"]);
 
-            $sql = "SELECT DISTINCT p.id AS pid, p.person, q.question, q.id AS qid, a.id AS aid FROM researchlog r JOIN assertions a ON r.assertionid = a.id JOIN subjects p ON a.subjectid = p.id JOIN questions q ON a.questionid = q.id WHERE r.id = " . $researchlogid;
+            $sql = "SELECT DISTINCT p.id AS pid, p.identifier, q.question, q.id AS qid, a.id AS aid FROM researchlog r JOIN assertions a ON r.assertionid = a.id JOIN subjects p ON a.subjectid = p.id JOIN questions q ON a.questionid = q.id WHERE r.id = " . $researchlogid;
 
             if($result = mysqli_query($link, $sql)){
                 $row = mysqli_fetch_array($result);
@@ -50,7 +50,7 @@ require_once "config/config.php";
                 $assertionid = $row['aid'];
                 $logtablehtml = '<a href="researchlog.php?pid='.$row["pid"].'&tid='.$row["qid"].'&new=1" class="btn btn-success pull-right"><i class="fa fa-plus"></i> Start New Log with Same Question</a></div>';
                 $logtablehtml .= '<table class="table table-bordered table-striped"><thead><tr><th class="w-50">Individual</th><th class="w-50">Event/Fact</th></tr></thead>';
-                $logtablehtml .= "<tbody><tr><td>" . $row['person'] . "</td><td>" . $row['question'] . "</td></tr></tbody></table>";
+                $logtablehtml .= "<tbody><tr><td>" . $row['identifier'] . "</td><td>" . $row['question'] . "</td></tr></tbody></table>";
                 $logformhtml = '<form action="' . htmlspecialchars($_SERVER["PHP_SELF"]) . '" method="post"><input type="hidden" name="researchlogid" value="'.$researchlogid.'">';
         
                 $sql2 = "SELECT r.researchdate, r.repository, r.searchparams, s.citation, r.lastmodified FROM researchlog r JOIN researchlogentries l ON r.id = l.researchlogid JOIN sources s ON l.sourceid = s.id WHERE r.assertionid = " . $assertionid . " ORDER BY r.researchdate, r.repository, r.searchparams, s.citation, r.lastmodified";
@@ -128,7 +128,7 @@ require_once "config/config.php";
                 $tid = trim($_GET["tid"]);
             }
             if($pid && $tid) {
-                $sql = "SELECT DISTINCT p.id AS pid, p.person, r.id, q.id AS qid, q.question FROM researchlog r JOIN assertions a ON r.assertionid = a.id JOIN subjects p ON a.subjectid = p.id JOIN questions q ON a.questionid = q.id WHERE a.subjectid = " . $pid . " AND a.questionid = " . $tid;
+                $sql = "SELECT DISTINCT p.id AS pid, p.identifier, r.id, q.id AS qid, q.question FROM researchlog r JOIN assertions a ON r.assertionid = a.id JOIN subjects p ON a.subjectid = p.id JOIN questions q ON a.questionid = q.id WHERE a.subjectid = " . $pid . " AND a.questionid = " . $tid;
                 if($result = mysqli_query($link, $sql)){
                     $numrows = mysqli_num_rows($result);
                     if($numrows > 0) {
@@ -147,7 +147,7 @@ require_once "config/config.php";
                             $logtablehtml .= '<table class="table table-bordered table-striped"><thead><tr><th>Individual</th><th>Event/Fact</th><th>Choose:</th></tr></thead><tbody>';
                                 while($row = mysqli_fetch_array($result)){
                                     $rid = $row['id'];
-                                    $logtablehtml .= "<tr><td>" . $row['person'] . "</td><td>" . $row['question'] . "</td>";
+                                    $logtablehtml .= "<tr><td>" . $row['identifier'] . "</td><td>" . $row['question'] . "</td>";
                                     $logtablehtml .= '<td><a href="researchlog.php?researchlogid='. $row['id'] .'" class="btn btn-info ml-2"><i class="fa fa-mail-forward"></i> Go</a></td></tr>';
                                 }
                                 $logtablehtml .= "</tbody></table>";
