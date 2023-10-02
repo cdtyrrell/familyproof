@@ -38,7 +38,9 @@ if(isset($_POST["id"]) && !empty($_POST["id"])){
             foreach($infoidarr as $i) {
                 $eviQ = $_POST["EviQ".$i];
                 $eviA = $_POST["EviA".$i];
+                $infoCntx = $_POST["infoCntx".$i];
                 $sql .= "UPDATE evidence SET assessment = '".$eviA."', quality = '".$eviQ."' WHERE assertionid = ".$id." AND informationid = ".$i."; ";
+                $sql .= "UPDATE information SET context = '".$infoCntx."' WHERE id = ".$i."; ";
             }
             if($result = mysqli_multi_query($link, $sql)){
                 header("location: assertion.php?id=" . $id);
@@ -116,7 +118,7 @@ if(isset($_POST["id"]) && !empty($_POST["id"])){
 <head>
     <meta charset="UTF-8">
     <title>Assertion</title>
-    <?php require_once "stylesheets.php"; ?>
+    <?php require_once "style/stylesheets.php"; ?>
     <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.1/dist/umd/popper.min.js"></script>
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
@@ -184,7 +186,7 @@ if(isset($_POST["id"]) && !empty($_POST["id"])){
 
                     <?php
                     // Attempt select query execution
-                    $sql = "SELECT e.informationid, e.assertionid, s.citation, s.sourcedate, s.provenance, i.content, i.context, e.assessment, e.quality FROM evidence e JOIN information i ON e.informationid = i.id JOIN sources s ON i.sourceid = s.id WHERE e.assertionid = " . $id . " ORDER BY s.citation, i.content";
+                    $sql = "SELECT e.informationid, e.assertionid, s.citation, s.sourcedate, s.provenance, s.informants, i.content, i.context, e.assessment, e.quality FROM evidence e JOIN information i ON e.informationid = i.id JOIN sources s ON i.sourceid = s.id WHERE e.assertionid = " . $id . " ORDER BY s.citation, i.content";
                     if($result = mysqli_query($link, $sql)){
                         if(mysqli_num_rows($result) > 0){
                             echo '<table class="table table-bordered table-striped table-sm" style="font-size: 0.8rem !important;">';
@@ -193,6 +195,7 @@ if(isset($_POST["id"]) && !empty($_POST["id"])){
                                         echo '<th>Source</th>';
                                         echo "<th>Date</th>";
                                         echo "<th>Information Content</th>";
+                                        echo "<th>Informants</th>";
                                         echo "<th>Source Provenance</th>";
                                         echo "<th>Information Context</th>";
                                         echo "<th>Evidence Quality</th>";
@@ -215,8 +218,12 @@ if(isset($_POST["id"]) && !empty($_POST["id"])){
                                         //} else {
                                             echo "<td>" . $row['content'] . "</td>";
                                         //}
+                                        echo "<td>" . $row['informants'] . "</td>";
                                         echo "<td>" . $row['provenance'] . "</td>";
-                                        echo "<td>" . $row['context'] . "</td>";
+                                        echo '<td><select name="infoCntx'.$row['informationid'].'"><option value="unknown">Unknown</option>';
+                                        echo '<option ' . (($row['context'] == 'primary') ? 'selected' : '') . ' value="primary">Primary</option>';
+                                        echo '<option ' . (($row['context'] == 'secondary') ? 'selected' : '') . ' value="secondary">Secondary</option>';
+                                        echo '<option ' . (($row['context'] == 'indeterminable') ? 'selected' : '') . ' value="indeterminable">Indeterminable</option></select></td>';
 
                                         echo '<td><select name="EviQ'.$row['informationid'].'"><option value="unknown">Unknown</option>';
                                         echo '<option ' . (($row['quality'] == 'direct') ? 'selected' : '') . ' value="direct">Direct</option>';

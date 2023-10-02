@@ -52,7 +52,7 @@ mysqli_close($link);
 <head>
     <meta charset="UTF-8">
     <title>Add/Edit Individual</title>
-    <?php require_once "stylesheets.php"; ?>
+    <?php require_once "style/stylesheets.php"; ?>
 </head>
 <body>
     <?php require_once "header.php"; ?>

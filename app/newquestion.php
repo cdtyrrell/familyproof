@@ -72,7 +72,7 @@ if($_SERVER["REQUEST_METHOD"] == "POST"){
 <head>
     <meta charset="UTF-8">
     <title>Add Individual</title>
-    <?php require_once "stylesheets.php"; ?>
+    <?php require_once "style/stylesheets.php"; ?>
 </head>
 <body>
     <?php require_once "header.php"; ?>

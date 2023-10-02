@@ -10,13 +10,13 @@ function get_http_status_code($url) {
 }
 
 if(get_http_status_code("https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css") != 200) {
-    echo '<link rel="stylesheet" href="bootstrap-fallback.css">';
+    echo '<link rel="stylesheet" href="style/bootstrap-fallback.css">';
 } else {
     echo '<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">';
 }
 
 if(get_http_status_code("https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css") != 200) {
-    echo '<link rel="stylesheet" href="fontawesome-fallback.css">';
+    echo '<link rel="stylesheet" href="style/fontawesome-fallback.css">';
 } else {
     echo '<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">';
 }

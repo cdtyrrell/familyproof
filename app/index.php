@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <title>Dashboard</title>
-    <?php require_once "stylesheets.php"; ?>
+    <?php require_once "style/stylesheets.php"; ?>
     <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.1/dist/umd/popper.min.js"></script>
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
@@ -158,9 +158,9 @@
                             echo "<thead>";
                             echo "<tr>";
                             echo "<th>Name</th>";
-                            echo "<th>Event</th>";
+                            echo "<th>Event/Fact</th>";
                             echo "<th>Last Updated</th>";
-                            echo "<th>Analysis</th>";
+                            echo "<th>Analysis Action</th>";
                             echo "</tr>";
                             echo "</thead>";
                             echo "<tbody>";
@@ -170,7 +170,7 @@
                           echo "<td>" . $row['question'] . "</td>";
                           echo "<td>" . $row['lastmodified'] . "</td>";
                           if($row['assertionstatus'] == 'analyzed') {
-                            echo '<td><a href="assertion.php?id='. $row["id"] .'" title="Reanalyze" data-toggle="tooltip" class="btn btn-success"><i class="fa fa-check"></i> Done</a></td>';
+                            echo '<td><a href="assertion.php?id='. $row["id"] .'" title="Reanalyze" data-toggle="tooltip" class="btn btn-success"><i class="fa fa-check"></i> Analyzed</a></td>';
                           } else {
                             echo '<td><a href="assertion.php?id='. $row["id"] .'" title="Review" data-toggle="tooltip" class="btn btn-warning"><i class="fa fa-pencil"></i> Review</a></td>';
                           }

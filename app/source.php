@@ -90,13 +90,12 @@ if($_SERVER["REQUEST_METHOD"] == "POST"){
         }
 
         // Prepare an insert statement for info
-        //$infosql = "SET FOREIGN_KEY_CHECKS = 0;";
         $infosql = "REPLACE INTO information (id, sourceid, subjectid, questionid, content) VALUES ";
         $individuals = $questions = array();
         for ($p = 1; $p <= 10; $p++) {
             for ($h = 1; $h <= 20; $h++) {
                 if(trim($_POST["p".$p]) > 0 && trim($_POST["h".$h]) > 0) { 
-                    if(trim($_POST["id".$p."-".$h]) != '') {
+                    if(trim($_POST[$p."-".$h]) != '') {
                         if(substr($infosql, -1) == ")") $infosql .= ",";
                         $infosql .= '(';
                         if(trim($_POST["id".$p."-".$h]) != '') {
@@ -162,7 +161,7 @@ if($_SERVER["REQUEST_METHOD"] == "POST"){
 <head>
     <meta charset="UTF-8">
     <title>New Source</title>
-    <?php require_once "stylesheets.php"; ?>
+    <?php require_once "style/stylesheets.php"; ?>
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
     <script>
