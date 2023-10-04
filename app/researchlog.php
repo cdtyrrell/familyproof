@@ -198,6 +198,13 @@ require_once "config/config.php";
         if($result2 = mysqli_query($link, $sql)){
             $newid = mysqli_insert_id($link);
             mysqli_free_result($result2);
+            // Refresh evidence connections when new assertion created (in cases of split questions like different residences, occupations, etc.)
+            $evisql = "INSERT INTO evidence(informationid,assertionid) SELECT i.id, a.id FROM information i JOIN assertions a ON i.subjectid = a.subjectid AND i.questionid = a.questionid WHERE NOT EXISTS (SELECT * FROM evidence WHERE evidence.informationid = i.id AND evidence.assertionid = a.id)";
+            if($result = mysqli_query($link, $evisql)){
+                mysqli_free_result($result);        
+            } else {
+                echo "Unable to refresh evidence.";
+            }
             header("location: researchlog.php?researchlogid=" . $newid);               
         } else {
             $logtablehtml = '<div class="alert alert-danger"><em>Cannot create this record!</em></div>';

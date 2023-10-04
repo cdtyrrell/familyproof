@@ -7,21 +7,12 @@
     <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.1/dist/umd/popper.min.js"></script>
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+    <script src="controller/client/dashboard.js"></script>
     <style>
         table tr td:last-child{
             width: 120px;
         }
     </style>
-    <script>
-        $(document).ready(function(){
-            $('[data-toggle="tooltip"]').tooltip();   
-        });
-        function goButton() {
-            $pid = document.getElementById("who").value;
-            $tid = document.getElementById("what").value;
-            window.location.href = "researchlog.php?pid=" + $pid + "&tid=" + $tid;
-        }
-    </script>
 </head>
 <body>
     <?php require_once "header.php"; ?>

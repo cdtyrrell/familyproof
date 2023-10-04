@@ -123,7 +123,7 @@ if(isset($_POST["id"]) && !empty($_POST["id"])){
     <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.1/dist/umd/popper.min.js"></script>
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
-    <script src="assertion.js"></script>
+    <script src="controller/client/assertion.js"></script>
     <style>
         table tr td:last-child{
             width: 120px;
