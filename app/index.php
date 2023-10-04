@@ -3,7 +3,10 @@
 <head>
     <meta charset="UTF-8">
     <title>Dashboard</title>
-    <?php require_once "style/stylesheets.php"; ?>
+    <?php
+        require_once "style/stylesheets.php";
+        require_once "controller/server/htmlElements.php";
+    ?>
     <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.1/dist/umd/popper.min.js"></script>
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
@@ -30,27 +33,31 @@
                     </div>
 
                     <div class="row">
+                        <div class="form-group col-md-6">
+                            <?php echo individualsDropdown(); ?>
+                        </div>
+
                         <?php
                         // Include config file
-                        require_once "config/config.php";
+                        // require_once "config/config.php";
                         
-                        $sql = "SELECT id, identifier FROM individuals ORDER BY presumedname, presumeddates";
-                        if($result = mysqli_query($link, $sql)){
-                            if(mysqli_num_rows($result) > 0){
-                                $individualsdropdown = '<div class="form-group col-md-6">';
-                                $individualsdropdown .= '<select id="who" class="form-control">';
-                                while($row = mysqli_fetch_array($result)){
-                                    $individualsdropdown .= '<option value="' . $row["id"] . '">' . $row['identifier'] . '</option>';
-                                }
-                                $individualsdropdown .= "</select>";
-                                $individualsdropdown .= "</div>";
-                                echo $individualsdropdown;
-                                // Free result set
-                                mysqli_free_result($result);
-                            } else {
-                                echo '<div class="alert alert-danger"><em>No parties were found.</em></div>';
-                            }
-                        } 
+                        // $sql = "SELECT id, identifier FROM individuals ORDER BY presumedname, presumeddates";
+                        // if($result = mysqli_query($link, $sql)){
+                        //     if(mysqli_num_rows($result) > 0){
+                        //         $individualsdropdown = '<div class="form-group col-md-6">';
+                        //         $individualsdropdown .= '<select id="who" class="form-control">';
+                        //         while($row = mysqli_fetch_array($result)){
+                        //             $individualsdropdown .= '<option value="' . $row["id"] . '">' . $row['identifier'] . '</option>';
+                        //         }
+                        //         $individualsdropdown .= "</select>";
+                        //         $individualsdropdown .= "</div>";
+                        //         echo $individualsdropdown;
+                        //         // Free result set
+                        //         mysqli_free_result($result);
+                        //     } else {
+                        //         echo '<div class="alert alert-danger"><em>No parties were found.</em></div>';
+                        //     }
+                        // } 
 
                         $sql = "SELECT id, question FROM questions";
                         if($result = mysqli_query($link, $sql)){

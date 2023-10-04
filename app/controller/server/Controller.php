@@ -1,6 +1,6 @@
 <?php
-// Needs db connection
-//require_once "config/config.php";
+// Needs db credentials
+require_once "config/config.php";
 
 class Controller
 {
@@ -8,11 +8,11 @@ class Controller
 
     function __construct() {
         /* Attempt to connect to MySQL database */
-        $this->link = mysqli_connect('localhost', 'root', '', 'familyproof');
+        $this->link = mysqli_connect(DB_SERVER, DB_USERNAME, DB_PASSWORD, DB_NAME);
  
         // Check connection
         if($this->link === false){
-            die("ERROR: Could not connect. " . mysqli_connect_error());
+            die("ERROR: Controller could not connect. " . mysqli_connect_error());
         }
     }
 }
