@@ -38,8 +38,9 @@ if(isset($_POST["id"]) && !empty($_POST["id"])){
             foreach($infoidarr as $i) {
                 $eviQ = $_POST["EviQ".$i];
                 $eviA = $_POST["EviA".$i];
+                $eviL = $_POST["EviL".$i];
                 $infoCntx = $_POST["infoCntx".$i];
-                $sql .= "UPDATE evidence SET assessment = '".$eviA."', quality = '".$eviQ."' WHERE assertionid = ".$id." AND informationid = ".$i."; ";
+                $sql .= "UPDATE evidence SET assessment = '".$eviA."', quality = '".$eviQ."', applicability = '".$eviL."' WHERE assertionid = ".$id." AND informationid = ".$i."; ";
                 $sql .= "UPDATE information SET context = '".$infoCntx."' WHERE id = ".$i."; ";
             }
             if($result = mysqli_multi_query($link, $sql)){
@@ -122,6 +123,7 @@ if(isset($_POST["id"]) && !empty($_POST["id"])){
     <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.1/dist/umd/popper.min.js"></script>
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+    <script src="assertion.js"></script>
     <style>
         table tr td:last-child{
             width: 120px;
@@ -176,7 +178,7 @@ if(isset($_POST["id"]) && !empty($_POST["id"])){
                         </div>
                         <input type="hidden" name="id" value="<?php echo $id; ?>"/>
                         <input type="submit" class="btn btn-primary" value="Update">
-                        <a href="index.php" class="btn btn-secondary ml-2">Cancel</a>
+                        <!-- <a href="index.php" class="btn btn-secondary ml-2">Cancel</a> -->
                     <hr>
 
                     <div class="mb-3 clearfix">
@@ -186,12 +188,13 @@ if(isset($_POST["id"]) && !empty($_POST["id"])){
 
                     <?php
                     // Attempt select query execution
-                    $sql = "SELECT e.informationid, e.assertionid, s.citation, s.sourcedate, s.provenance, s.informants, i.content, i.context, e.assessment, e.quality FROM evidence e JOIN information i ON e.informationid = i.id JOIN sources s ON i.sourceid = s.id WHERE e.assertionid = " . $id . " ORDER BY s.citation, i.content";
+                    $sql = "SELECT e.informationid, e.assertionid, e.applicability, s.citation, s.sourcedate, s.provenance, s.informants, i.content, i.context, e.assessment, e.quality FROM evidence e JOIN information i ON e.informationid = i.id JOIN sources s ON i.sourceid = s.id WHERE e.assertionid = " . $id . " ORDER BY s.citation, i.content";
                     if($result = mysqli_query($link, $sql)){
                         if(mysqli_num_rows($result) > 0){
                             echo '<table class="table table-bordered table-striped table-sm" style="font-size: 0.8rem !important;">';
                                 echo "<thead>";
                                     echo "<tr>";
+                                        echo "<th>Action</th>";
                                         echo '<th>Source</th>';
                                         echo "<th>Date</th>";
                                         echo "<th>Information Content</th>";
@@ -206,7 +209,18 @@ if(isset($_POST["id"]) && !empty($_POST["id"])){
                                 $previoussource = $previouscontent = '';
                                 $infoidarr = '';
                                 while($row = mysqli_fetch_array($result)){
-                                    echo "<tr>";
+                                    if($row['applicability'] == 'unclaimed')
+                                    {
+                                        echo '<tr class="table-success" id="tblrow'.$row['informationid'].'">';
+                                        echo '<td><button type="button" class="btn btn-primary" style="display: block;" onclick="linkinfo(1,'.$row['informationid'].')"><i class="fa fa-plus"></i></button>';
+                                        echo '<button type="button" class="btn btn-warning" style="display: block;" onclick="linkinfo(0,'.$row['informationid'].')"><i class="fa fa-minus"></i></button>';    
+                                    }
+                                    else
+                                    {
+                                        echo '<tr id="tblrow'.$row['informationid'].'">';
+                                        echo '<td><button type="button" class="btn btn-info" style="display: block;" onclick="linkinfo(0,'.$row['informationid'].')"><i class="fa fa-minus"></i></button>';    
+                                    }
+                                    echo '<input type="hidden" id="EviL'.$row['informationid'].'" name="EviL'.$row['informationid'].'" value="'.$row['applicability'].'"></td>';
                                         if($row['citation'] == $previoussource) {
                                             echo '<td>ibid.</td><td>"</td>';
                                         } else {
