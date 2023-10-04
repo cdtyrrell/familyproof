@@ -6,7 +6,7 @@ require_once "config/config.php";
 $category = $citation = $sourcedate = $provenance = "";
 
 // Load parties
-$sql = "SELECT id, identifier FROM subjects ORDER BY presumedname, presumeddates";
+$sql = "SELECT id, identifier FROM individuals ORDER BY presumedname, presumeddates";
 if($result = mysqli_query($link, $sql)){
     if(mysqli_num_rows($result) > 0){
         $individualsdropdown = '<option value="0"></option>';
@@ -116,6 +116,9 @@ if($_SERVER["REQUEST_METHOD"] == "POST"){
             }
         }
         if($result = mysqli_query($link, $infosql)){
+            $infoqryinfo = mysqli_info($link);
+            $infoqrylastid = mysqli_insert_id($link);
+            //var_dump($infoqryinfo);
             mysqli_free_result($result);
         } else {
             printf("Error: %s.\n", mysqli_stmt_error($result));
@@ -139,9 +142,21 @@ if($_SERVER["REQUEST_METHOD"] == "POST"){
         }
 
         // Update assertions table
-        $assql = "UPDATE assertions SET assertionstatus = 'needs-review' WHERE subjectid IN (" . implode(',', $individuals) . ") AND questionid IN (" . implode(',', $questions) . ")";
+        // Need to distinguish newly added information from prior refresh
+        list($records, $duplicates, $warnings) = sscanf($infoqryinfo, "Records: %d Duplicates: %d Warnings: %d");
+        $diff = $records - $duplicate;
+        $newids = '';
+        if($diff > 0)
+        {
+            $newids = range(($infoqrylastid + 1) - $diff, $infoqrylastid);
+        }
+        
+        $assql = "UPDATE assertions SET assertionstatus = 'needs-review' WHERE id IN (SELECT DISTINCT assertionid FROM evidence WHERE applicability = 'unclaimed')";   
+        //UPDATE assertions SET assertionstatus = 'needs-review' WHERE id IN (SELECT DISTINCT assertionid FROM evidence WHERE informationid IN (" . implode(',', $newids) . ") )";
+        //UPDATE assertions SET assertionstatus = 'needs-review' WHERE subjectid IN (" . implode(',', $individuals) . ") AND questionid IN (" . implode(',', $questions) . ")";
+        //UPDATE assertions SET assertionstatus = 'needs-review' WHERE subjectid IN (" . implode(',', $individuals) . ") AND id IN (SELECT assertionid FROM evidence WHERE informationid IN (" . implode(',', $newids) . ") )";   //UPDATE assertions SET assertionstatus = 'needs-review' WHERE subjectid IN (" . implode(',', $individuals) . ") AND questionid IN (" . implode(',', $questions) . ")";
         if(!$result = mysqli_query($link, $assql)){
-            echo "Unable to refresh assertions.";
+            echo "Unable to refresh assertions. " . $assql;
         } else {
             mysqli_free_result($result);
         }
@@ -150,7 +165,7 @@ if($_SERVER["REQUEST_METHOD"] == "POST"){
     //mysqli_close($link);
 
     if(isset($researchlogid)) {
-        header("location: researchlog.php?researchlogid=" . $researchlogid . "&sourceid=" .$newid);
+        //header("location: researchlog.php?researchlogid=" . $researchlogid . "&sourceid=" .$newid);
         exit();
     }
 }
@@ -186,6 +201,7 @@ if($_SERVER["REQUEST_METHOD"] == "POST"){
     </script>
 </head>
 <body>
+    <?php echo $saveme; ?>
     <?php require_once "header.php"; ?>
     <div class="wrapper">
         <div class="container-fluid">

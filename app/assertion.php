@@ -61,7 +61,7 @@ if(isset($_POST["id"]) && !empty($_POST["id"])){
     if(isset($_GET["id"]) && !empty($_GET["id"])){
         // Get hidden input value
         $id = $_GET["id"];
-        $sql = "SELECT p.identifier, q.question, a.assertionstatus, a.conclusion, a.relatedsubjectid, a.dateoccurred, a.place, a.analysis FROM assertions a JOIN subjects p ON a.subjectid = p.id JOIN questions q ON a.questionid = q.id WHERE a.id = " . $id;
+        $sql = "SELECT i.identifier, q.question, a.assertionstatus, a.conclusion, a.relatedsubjectid, a.dateoccurred, a.place, a.analysis FROM assertions a JOIN individuals i ON a.subjectid = i.id JOIN questions q ON a.questionid = q.id WHERE a.id = " . $id;
         if($result = mysqli_query($link, $sql)){
             if(mysqli_num_rows($result) == 1){
                 $assertiondisplaytable = '<table class="table table-bordered table-striped"><thead><tr><th>#</th><th>Individual</th><th>Event/Fact</th><th>Status</th></tr></thead><tbody>';
@@ -90,7 +90,7 @@ if(isset($_POST["id"]) && !empty($_POST["id"])){
         }
 
         // Load parties
-        $sql = "SELECT id, identifier FROM subjects ORDER BY presumedname, presumeddates";
+        $sql = "SELECT id, identifier FROM individuals ORDER BY presumedname, presumeddates";
         if($result = mysqli_query($link, $sql)){
             if(mysqli_num_rows($result) > 0){
                 $individualsdropdown .= '<select class="form-control" name="associatedindividual"><option value="0"></option>';

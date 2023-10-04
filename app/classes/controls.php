@@ -3,7 +3,7 @@
 require_once $_SERVER['DOCUMENT_ROOT'] . "/config/config.php";
 
 function getArrayOfSubjects() {
-    $sql = "SELECT id, identifier FROM subjects ORDER BY presumedname, presumeddates";
+    $sql = "SELECT id, identifier FROM individuals ORDER BY presumedname, presumeddates";
     if($result = mysqli_query($link, $sql)){
         if(mysqli_num_rows($result) > 0){
             $individualsdropdown = '';

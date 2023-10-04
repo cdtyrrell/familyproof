@@ -18,7 +18,7 @@ if($_SERVER["REQUEST_METHOD"] == "POST"){
     
     // Check input errors before inserting in database
     // Prepare an insert statement
-    $sql = "INSERT INTO subjects (presumedname, presumedsex, presumeddates) VALUES (?, ?, ?)";
+    $sql = "INSERT INTO individuals (presumedname, presumedsex, presumeddates) VALUES (?, ?, ?)";
         
     if($stmt = mysqli_prepare($link, $sql)){
         // Bind variables to the prepared statement as parameters

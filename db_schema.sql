@@ -14,7 +14,7 @@ CREATE TABLE sources (
     lastmodified DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
 );
 
-CREATE TABLE subjects (
+CREATE TABLE individuals (
     id INT NOT NULL PRIMARY KEY AUTO_INCREMENT,
     presumedname VARCHAR(255) NOT NULL,
     presumedsex ENUM('male', 'female', 'non-binary', 'unknown') NOT NULL DEFAULT 'unknown',
@@ -36,7 +36,6 @@ CREATE TABLE questions (
     question VARCHAR(255) NOT NULL,
     questiontype ENUM('vital','biographical','relationship','descriptive')
 );
-
 /*
 vital        : date, place
 biographical : date, place, text
@@ -47,10 +46,6 @@ alt:
     relationship : (when, where,) who
     activity     : what
 */
-
-INSERT INTO questions (question, questiontype) VALUES ('Name/Known As','descriptive'),('Residence','vital'),('Birth','vital'),('Marriage','relationship'),('Death','vital'),('Sex','descriptive'),
-('Burial','biographical'),('Baptism','biographical'),('Child of','relationship'),('Adoption','relationship'),('Divorce','relationship'),('Engagement','relationship'),('Degree','biographical'),('Will','biographical'),('Probate','biographical'),('Religion','biographical'),('Deed','biographical'),
-('Naturalization','biographical'),('Immigration','biographical'),('Cause of Death','biographical'),('Occupation','biographical'),('Retirement','biographical');
 
 CREATE TABLE information (
     id INT NOT NULL PRIMARY KEY AUTO_INCREMENT,
@@ -89,6 +84,7 @@ CREATE TABLE evidence (
     assertionid INT NOT NULL,
     assessment TEXT,
     quality ENUM('direct', 'indirect', 'negative', 'unknown') NOT NULL DEFAULT 'unknown',
+    applicability ENUM('applicable','not-applicable','unclaimed') DEFAULT 'unclaimed',
     created DATETIME DEFAULT CURRENT_TIMESTAMP,
     lastmodified DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
     PRIMARY KEY(informationid, assertionid),
@@ -144,31 +140,26 @@ CREATE TABLE sourcetemplates (
     headings TEXT
 );
 
-INSERT INTO sourcetemplates (category, pagecitation, linecitation) VALUES ('CENS: U.S. Federal, 1790','1790 U.S. census, COUNTY County, STATE, LOCALITY, p. # (penned), NARA microfilm publication X#, roll #.','line #, NAME'),('CENS: U.S. Federal, 1800','1800 U.S. census, COUNTY County, STATE, LOCALITY, p. # (penned), NARA microfilm publication X#, roll #.','line #, NAME'),('CENS: U.S. Federal, 1810','1810 U.S. census, COUNTY County, STATE, LOCALITY, p. # (penned), NARA microfilm publication X#, roll #.','line #, NAME'),('CENS: U.S. Federal, 1820','1820 U.S. census, COUNTY County, STATE, LOCALITY, p. # (penned), NARA microfilm publication X#, roll #.','line #, NAME'),('CENS: U.S. Federal, 1830','1830 U.S. census, COUNTY County, STATE, LOCALITY, p. # (penned), NARA microfilm publication X#, roll #.','line #, NAME'),('CENS: U.S. Federal, 1840','1840 U.S. census, COUNTY County, STATE, LOCALITY, p. # (penned), NARA microfilm publication X#, roll #.','line #, NAME'),('CENS: U.S. Federal, 1850','1850 U.S. census, COUNTY County, STATE, population schedule, LOCALITY, p. # (stamped), NARA microfilm publication X#, roll #.','dwelling #, family #, SURNAME'),('CENS: U.S. Federal, 1860','1860 U.S. census, COUNTY County, STATE, population schedule, LOCALITY, p. # (stamped), NARA microfilm publication X#, roll #.','dwelling #, family #, SURNAME'),('CENS: U.S. Federal, 1870','1870 U.S. census, COUNTY County, STATE, population schedule, LOCALITY, p. # (stamped), NARA microfilm publication X#, roll #.','dwelling #, family #, SURNAME'),('CENS: U.S. Federal, 1880','1880 U.S. census, COUNTY County, STATE, population schedule, LOCALITIES, folio # (stamped), enumeration district (ER) #, sheet #-X, NARA microfilm publication X#, roll #.','dwelling #, family #, NAME'),('CENS: U.S. Federal, 1890','1890 U.S. census, COUNTY County, STATE, population schedule, LOCALITIES, folio # (stamped), enumeration district (ER) #, sheet #-X, NARA microfilm publication X#, roll #.','dwelling #, family #, NAME'),('CENS: U.S. Federal, 1900','1900 U.S. census, COUNTY County, STATE, population schedule, LOCALITIES, folio # (stamped), enumeration district (ER) #, sheet #-X, NARA microfilm publication X#, roll #.','dwelling #, family #, NAME'),('CENS: U.S. Federal, 1910','1910 U.S. census, COUNTY County, STATE, population schedule, LOCALITIES, folio # (stamped), enumeration district (ER) #, sheet #-X, NARA microfilm publication X#, roll #.','dwelling #, family #, NAME'),('CENS: U.S. Federal, 1920','1920 U.S. census, COUNTY County, STATE, population schedule, LOCALITIES, folio # (stamped), enumeration district (ER) #, sheet #-X, NARA microfilm publication X#, roll #.','dwelling #, family #, NAME'),('CENS: U.S. Federal, 1930','1930 U.S. census, COUNTY County, STATE, population schedule, LOCALITIES, folio # (stamped), enumeration district (ER) #, sheet #-X, NARA microfilm publication X#, roll #.','dwelling #, family #, NAME'),('CENS: U.S. Federal, 1940','1940 U.S. census, COUNTY County, STATE, population schedule, LOCALITIES, folio # (stamped), enumeration district (ER) #, sheet #-X, NARA microfilm publication X#, roll #.','dwelling #, family #, NAME'),('CENS: U.S. Federal, 1950','1950 U.S. census, COUNTY County, STATE, population schedule, LOCALITIES, folio # (stamped), enumeration district (ER) #, sheet #-X, NARA microfilm publication X#, roll #.','dwelling #, family #, NAME');
-INSERT INTO sourcetemplates (category, pagecitation, linecitation) VALUES ('CENS: U.S. State, 1875','1875 STATE state census, COUNTY County, population schedule, LOCALITY, p. #, REPOSITORY, REPOLOCATION, microfilm #.','dwelling #, family #, NAME'),('CENS: U.S. State, 1885','1885 STATE state census, COUNTY County, population schedule, LOCALITY, p. #, REPOSITORY, REPOLOCATION, microfilm #.','dwelling #, family #, NAME'),('CENS: U.S. State, 1895','1895 STATE state census, COUNTY County, population schedule, LOCALITY, p. #, REPOSITORY, REPOLOCATION, microfilm #.','dwelling #, family #, NAME'),('CENS: U.S. State, 1905','1905 STATE state census, COUNTY County, population schedule, LOCALITY, p. #, REPOSITORY, REPOLOCATION, microfilm #.','dwelling #, family #, NAME'),('CENS: U.S. State, 1915','1915 STATE state census, COUNTY County, population schedule, LOCALITY, p. #, REPOSITORY, REPOLOCATION, microfilm #.','dwelling #, family #, NAME'),('CENS: U.S. State, 1925','1925 STATE state census, COUNTY County, population schedule, LOCALITY, p. #, REPOSITORY, REPOLOCATION, microfilm #.','dwelling #, family #, NAME'),('CENS: U.S. State, 1935','1935 STATE state census, COUNTY County, population schedule, LOCALITY, p. #, REPOSITORY, REPOLOCATION, microfilm #.','dwelling #, family #, NAME'),('CENS: U.S. State, 1945','1945 STATE state census, COUNTY County, population schedule, LOCALITY, p. #, REPOSITORY, REPOLOCATION, microfilm #.','dwelling #, family #, NAME'),('CENS: U.S. State, 1955','1955 STATE state census, COUNTY County, population schedule, LOCALITY, p. #, REPOSITORY, REPOLOCATION, microfilm #.','dwelling #, family #, NAME');
-
-CREATE TABLE projects (
+CREATE TABLE logins (
     id INT NOT NULL PRIMARY KEY AUTO_INCREMENT,
-    title TEXT,
-    user VARCHAR(255),
+    username VARCHAR(255),
+    hashcredentials CHAR(60);
     created DATETIME DEFAULT CURRENT_TIMESTAMP,
     lastmodified DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
 );
 
+CREATE TABLE projects (
+    id INT NOT NULL PRIMARY KEY AUTO_INCREMENT,
+    title TEXT,
+    userid INT,
+    created DATETIME DEFAULT CURRENT_TIMESTAMP,
+    lastmodified DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    FOREIGN KEY (userid) REFERENCES logins (id)
+);
 
-/* LOAD TEST DATA */
-
-INSERT INTO subjects (presumedname, presumedsex, presumeddates) VALUES ('McPerson, Marty Benjamin', 'male', '1955-'),('Flotide, Genevieve', 'female', '1922-1986'),('McPerson, Charles Bobert','male','1922-2015');
-INSERT INTO sources (citation) values ('A different source.'),('Amos T. Ackerman, Attorney General, to Richard Crowley, U.S. Attorney, New York, Nov. 23, 1871; Vol. C, Oct. 27, 1871–Apr. 23, 1873, p. 60; Instruction Books, 1870–1904; General Records, Letters Sent, 1849–1919; General Records of the Department of Justice, Record Group 60; National Archives Building, Washington, DC.');
-INSERT INTO assertions (subjectid, questioneid) VALUES (1,2);
-INSERT INTO information (sourceid, subjectid, questionid, content) values (1,1,1,'Menasha, Winnebago County, Wisconsin, USA'),(2,1,1,'Information content here');
-INSERT INTO evidence (informationid, assertionid) values (1,1),(2,1);
-INSERT INTO researchlog (subjectid,questionid,repository,searchparams) VALUES (1,3,'my repo','my params');
-INSERT INTO researchlogentries (researchlogid,sourceid) VALUES (1,1),(1,2);
-
-/* 
-    SET FOREIGN_KEY_CHECKS = 0;
-    SET FOREIGN_KEY_CHECKS = 1;
-    ALTER TABLE tbl_name DROP FOREIGN KEY evidence_ibfk_1
-    SELECT TABLE_NAME,COLUMN_NAME,CONSTRAINT_NAME, REFERENCED_TABLE_NAME,REFERENCED_COLUMN_NAME FROM INFORMATION_SCHEMA.KEY_COLUMN_USAGE WHERE REFERENCED_TABLE_SCHEMA = 'familyproof' AND REFERENCED_TABLE_NAME = 'evidence';
- */
+/* LOAD DEFAULT DATA */
+INSERT INTO questions (question, questiontype) VALUES ('Name/Known As','descriptive'),('Residence','vital'),('Birth','vital'),('Marriage','relationship'),('Death','vital'),('Sex','descriptive'),
+('Burial','biographical'),('Baptism','biographical'),('Child of','relationship'),('Adoption','relationship'),('Divorce','relationship'),('Engagement','relationship'),('Degree','biographical'),('Will','biographical'),('Probate','biographical'),('Religion','biographical'),('Deed','biographical'),
+('Naturalization','biographical'),('Immigration','biographical'),('Cause of Death','biographical'),('Occupation','biographical'),('Retirement','biographical');
+INSERT INTO sourcetemplates (category, pagecitation, linecitation) VALUES ('CENS: U.S. Federal, 1790','1790 U.S. census, COUNTY County, STATE, LOCALITY, p. # (penned), NARA microfilm publication X#, roll #.','line #, NAME'),('CENS: U.S. Federal, 1800','1800 U.S. census, COUNTY County, STATE, LOCALITY, p. # (penned), NARA microfilm publication X#, roll #.','line #, NAME'),('CENS: U.S. Federal, 1810','1810 U.S. census, COUNTY County, STATE, LOCALITY, p. # (penned), NARA microfilm publication X#, roll #.','line #, NAME'),('CENS: U.S. Federal, 1820','1820 U.S. census, COUNTY County, STATE, LOCALITY, p. # (penned), NARA microfilm publication X#, roll #.','line #, NAME'),('CENS: U.S. Federal, 1830','1830 U.S. census, COUNTY County, STATE, LOCALITY, p. # (penned), NARA microfilm publication X#, roll #.','line #, NAME'),('CENS: U.S. Federal, 1840','1840 U.S. census, COUNTY County, STATE, LOCALITY, p. # (penned), NARA microfilm publication X#, roll #.','line #, NAME'),('CENS: U.S. Federal, 1850','1850 U.S. census, COUNTY County, STATE, population schedule, LOCALITY, p. # (stamped), NARA microfilm publication X#, roll #.','dwelling #, family #, SURNAME'),('CENS: U.S. Federal, 1860','1860 U.S. census, COUNTY County, STATE, population schedule, LOCALITY, p. # (stamped), NARA microfilm publication X#, roll #.','dwelling #, family #, SURNAME'),('CENS: U.S. Federal, 1870','1870 U.S. census, COUNTY County, STATE, population schedule, LOCALITY, p. # (stamped), NARA microfilm publication X#, roll #.','dwelling #, family #, SURNAME'),('CENS: U.S. Federal, 1880','1880 U.S. census, COUNTY County, STATE, population schedule, LOCALITIES, folio # (stamped), enumeration district (ER) #, sheet #-X, NARA microfilm publication X#, roll #.','dwelling #, family #, NAME'),('CENS: U.S. Federal, 1890','1890 U.S. census, COUNTY County, STATE, population schedule, LOCALITIES, folio # (stamped), enumeration district (ER) #, sheet #-X, NARA microfilm publication X#, roll #.','dwelling #, family #, NAME'),('CENS: U.S. Federal, 1900','1900 U.S. census, COUNTY County, STATE, population schedule, LOCALITIES, folio # (stamped), enumeration district (ER) #, sheet #-X, NARA microfilm publication X#, roll #.','dwelling #, family #, NAME'),('CENS: U.S. Federal, 1910','1910 U.S. census, COUNTY County, STATE, population schedule, LOCALITIES, folio # (stamped), enumeration district (ER) #, sheet #-X, NARA microfilm publication X#, roll #.','dwelling #, family #, NAME'),('CENS: U.S. Federal, 1920','1920 U.S. census, COUNTY County, STATE, population schedule, LOCALITIES, folio # (stamped), enumeration district (ER) #, sheet #-X, NARA microfilm publication X#, roll #.','dwelling #, family #, NAME'),('CENS: U.S. Federal, 1930','1930 U.S. census, COUNTY County, STATE, population schedule, LOCALITIES, folio # (stamped), enumeration district (ER) #, sheet #-X, NARA microfilm publication X#, roll #.','dwelling #, family #, NAME'),('CENS: U.S. Federal, 1940','1940 U.S. census, COUNTY County, STATE, population schedule, LOCALITIES, folio # (stamped), enumeration district (ER) #, sheet #-X, NARA microfilm publication X#, roll #.','dwelling #, family #, NAME'),('CENS: U.S. Federal, 1950','1950 U.S. census, COUNTY County, STATE, population schedule, LOCALITIES, folio # (stamped), enumeration district (ER) #, sheet #-X, NARA microfilm publication X#, roll #.','dwelling #, family #, NAME');
+INSERT INTO sourcetemplates (category, pagecitation, linecitation) VALUES ('CENS: U.S. State, 1875','1875 STATE state census, COUNTY County, population schedule, LOCALITY, p. #, REPOSITORY, REPOLOCATION, microfilm #.','dwelling #, family #, NAME'),('CENS: U.S. State, 1885','1885 STATE state census, COUNTY County, population schedule, LOCALITY, p. #, REPOSITORY, REPOLOCATION, microfilm #.','dwelling #, family #, NAME'),('CENS: U.S. State, 1895','1895 STATE state census, COUNTY County, population schedule, LOCALITY, p. #, REPOSITORY, REPOLOCATION, microfilm #.','dwelling #, family #, NAME'),('CENS: U.S. State, 1905','1905 STATE state census, COUNTY County, population schedule, LOCALITY, p. #, REPOSITORY, REPOLOCATION, microfilm #.','dwelling #, family #, NAME'),('CENS: U.S. State, 1915','1915 STATE state census, COUNTY County, population schedule, LOCALITY, p. #, REPOSITORY, REPOLOCATION, microfilm #.','dwelling #, family #, NAME'),('CENS: U.S. State, 1925','1925 STATE state census, COUNTY County, population schedule, LOCALITY, p. #, REPOSITORY, REPOLOCATION, microfilm #.','dwelling #, family #, NAME'),('CENS: U.S. State, 1935','1935 STATE state census, COUNTY County, population schedule, LOCALITY, p. #, REPOSITORY, REPOLOCATION, microfilm #.','dwelling #, family #, NAME'),('CENS: U.S. State, 1945','1945 STATE state census, COUNTY County, population schedule, LOCALITY, p. #, REPOSITORY, REPOLOCATION, microfilm #.','dwelling #, family #, NAME'),('CENS: U.S. State, 1955','1955 STATE state census, COUNTY County, population schedule, LOCALITY, p. #, REPOSITORY, REPOLOCATION, microfilm #.','dwelling #, family #, NAME');

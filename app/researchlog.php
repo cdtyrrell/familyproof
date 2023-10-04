@@ -42,7 +42,7 @@ require_once "config/config.php";
             $getparams = trim($_GET["newparams"]);
             $getdate = trim($_GET["date"]);
 
-            $sql = "SELECT DISTINCT p.id AS pid, p.identifier, q.question, q.id AS qid, a.id AS aid FROM researchlog r JOIN assertions a ON r.assertionid = a.id JOIN subjects p ON a.subjectid = p.id JOIN questions q ON a.questionid = q.id WHERE r.id = " . $researchlogid;
+            $sql = "SELECT DISTINCT i.id AS pid, i.identifier, q.question, q.id AS qid, a.id AS aid FROM researchlog r JOIN assertions a ON r.assertionid = a.id JOIN individuals i ON a.subjectid = i.id JOIN questions q ON a.questionid = q.id WHERE r.id = " . $researchlogid;
 
             if($result = mysqli_query($link, $sql)){
                 $row = mysqli_fetch_array($result);
@@ -128,7 +128,7 @@ require_once "config/config.php";
                 $tid = trim($_GET["tid"]);
             }
             if($pid && $tid) {
-                $sql = "SELECT DISTINCT p.id AS pid, p.identifier, r.id, q.id AS qid, q.question FROM researchlog r JOIN assertions a ON r.assertionid = a.id JOIN subjects p ON a.subjectid = p.id JOIN questions q ON a.questionid = q.id WHERE a.subjectid = " . $pid . " AND a.questionid = " . $tid;
+                $sql = "SELECT DISTINCT i.id AS pid, i.identifier, r.id, q.id AS qid, q.question FROM researchlog r JOIN assertions a ON r.assertionid = a.id JOIN individuals i ON a.subjectid = i.id JOIN questions q ON a.questionid = q.id WHERE a.subjectid = " . $pid . " AND a.questionid = " . $tid;
                 if($result = mysqli_query($link, $sql)){
                     $numrows = mysqli_num_rows($result);
                     if($numrows > 0) {

@@ -43,7 +43,7 @@
                         // Include config file
                         require_once "config/config.php";
                         
-                        $sql = "SELECT id, identifier FROM subjects ORDER BY presumedname, presumeddates";
+                        $sql = "SELECT id, identifier FROM individuals ORDER BY presumedname, presumeddates";
                         if($result = mysqli_query($link, $sql)){
                             if(mysqli_num_rows($result) > 0){
                                 $individualsdropdown = '<div class="form-group col-md-6">';
@@ -122,7 +122,7 @@
 
                     <?php
 
-                    $sql = "SELECT DISTINCT identifier FROM subjects ORDER BY identifier";
+                    $sql = "SELECT DISTINCT identifier FROM individuals ORDER BY identifier";
                     $individuals = array();
                     if($result = mysqli_query($link, $sql)){
                         if(mysqli_num_rows($result) > 0){
@@ -132,7 +132,7 @@
                         }
                     }
 
-                    $sql = "SELECT a.id, t.question, a.lastmodified, p.identifier, a.assertionstatus FROM assertions a JOIN subjects p ON a.subjectid = p.id JOIN questions t ON a.questionid = t.id ORDER BY p.identifier, t.question"; //WHERE a.assertionstatus = 'needs-review'
+                    $sql = "SELECT a.id, t.question, a.lastmodified, i.identifier, a.assertionstatus FROM assertions a JOIN individuals i ON a.subjectid = i.id JOIN questions t ON a.questionid = t.id ORDER BY i.identifier, t.question"; //WHERE a.assertionstatus = 'needs-review'
 
                     echo '<div class="accordion" id="accordionPreviousResearch">';
                     $indivTracker = '';
