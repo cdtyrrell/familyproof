@@ -1,50 +1,41 @@
 <?php
+// Process form data if page reloads after form is submitted
+if($_SERVER["REQUEST_METHOD"] == "POST")
+{
+    require_once "controller/server/Individual.php";
 
-// Include config file
-require_once "config/config.php";
- 
-// Define variables and initialize with empty values
-$name = $address = $salary = "";
-$name_err = $address_err = $salary_err = "";
- 
-// Processing form data when form is submitted
-if($_SERVER["REQUEST_METHOD"] == "POST"){
-    $input_name = trim($_POST["name"]);
-    $name = $input_name;
-    $input_address = trim($_POST["address"]);
-    $address = $input_address;
-    $input_salary = trim($_POST["salary"]);
-    $salary = $input_salary;
+    // Define and initialize variables
+    $postedName = trim($_POST["name"]);
+    $postedSex = trim($_POST["sex"]);
+    $postedDates = trim($_POST["dates"]);
     
-    // Check input errors before inserting in database
-    // Prepare an insert statement
-    $sql = "INSERT INTO individuals (presumedname, presumedsex, presumeddates) VALUES (?, ?, ?)";
-        
-    if($stmt = mysqli_prepare($link, $sql)){
-        // Bind variables to the prepared statement as parameters
-        mysqli_stmt_bind_param($stmt, "sss", $param_name, $param_address, $param_salary);
-        
-        // Set parameters
-        $param_name = $name;
-        $param_address = $address;
-        $param_salary = $salary;
-        
-        // Attempt to execute the prepared statement
-        if(mysqli_stmt_execute($stmt)){
-            // Records created successfully. Redirect to landing page
-            header("location: index.php");
-            exit();
-        } else{
-            echo "Oops! Something went wrong.";
-        }
-    }    
-    // Close statement
-    mysqli_stmt_close($stmt);
+    $individual = New Individual;
+    if($individual->addNewIndividual($postedName,$postedSex,$postedDates))
+    {
+        header("location: index.php");
+        exit();
+    }
+    else
+    {
+        echo "Failed to add new individual.";
+    }
 }
 
-// Close connection
-mysqli_close($link);
+// Load an individual if an id is provided
+if($_SERVER["REQUEST_METHOD"] == "GET")
+{
+    require_once "controller/server/Individual.php";
 
+    // Define and initialize variables
+    $gottenID = trim($_GET["id"]);
+    
+    $individual = New Individual;
+    $individual->setId($gottenID);
+    $indiDataArr = $individual->getIndividualDataArr();
+    $name = $indiDataArr['presumedname'];
+    $sex = $indiDataArr['presumedsex'];
+    $dates = $indiDataArr['presumeddates'];
+}
 ?>
  
 <!DOCTYPE html>
@@ -65,22 +56,19 @@ mysqli_close($link);
                     <form action="<?php echo htmlspecialchars($_SERVER["PHP_SELF"]); ?>" method="post">
                         <div class="form-group">
                             <label>Name</label>
-                            <input type="text" name="name" class="form-control <?php echo (!empty($name_err)) ? 'is-invalid' : ''; ?>" value="<?php echo $name; ?>">
-                            <span class="invalid-feedback"><?php echo $name_err;?></span>
+                            <input type="text" name="name" class="form-control" value="<?php echo (isset($name)) ? $name : ''; ?>">
                         </div>
                         <div class="form-group">
                             <label>Sex</label>
-                            <select name="address" class="form-control <?php echo (!empty($address_err)) ? 'is-invalid' : ''; ?>">
-                                <option value="unknown">Unknown</option>
-                                <option value="male">Male</option>
-                                <option value="female">Female</option>
+                            <select name="sex" class="form-control">
+                                <option value="unknown" <?php echo (isset($sex) && $sex == 'unknown') ? 'selected' : ''; ?> >Unknown</option>
+                                <option value="male" <?php echo (isset($sex) && $sex == 'male') ? 'selected' : ''; ?> >Male</option>
+                                <option value="female" <?php echo (isset($sex) && $sex == 'female') ? 'selected' : ''; ?> >Female</option>
                             </select>
-                            <span class="invalid-feedback"><?php echo $address_err;?></span>
                         </div>
                         <div class="form-group">
                             <label>Dates of birth and death</label>
-                            <input type="text" name="salary" class="form-control <?php echo (!empty($salary_err)) ? 'is-invalid' : ''; ?>" value="<?php echo $salary; ?>">
-                            <span class="invalid-feedback"><?php echo $salary_err;?></span>
+                            <input type="text" name="dates" class="form-control" value="<?php echo (isset($dates)) ? $dates : ''; ?>">
                         </div>
                         <input type="submit" class="btn btn-primary" value="Create">
                         <a href="index.php" class="btn btn-secondary ml-2">Cancel</a>

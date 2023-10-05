@@ -6,7 +6,7 @@
     <?php
         require_once "style/stylesheets.php";
         require_once "controller/server/htmlElements.php";
-        //require_once "controller/server/AssertionsController.php";
+        require_once "controller/server/Individual.php";
     ?>
     <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.1/dist/umd/popper.min.js"></script>
@@ -16,9 +16,9 @@
 <body>
     <h1>Welcome to the litterbox</h1>
     <?php 
-        //$hello = New AssertionsController;
+        $hello = New Individual;
         //var_dump($hello->getPreviousResearch());
-        echo previousResearchAccordion();
+        echo $hello->addNewIndividual("james","male","1832-2029");
     ?>
 </body>
 </html>
