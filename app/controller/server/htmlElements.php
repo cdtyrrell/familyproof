@@ -3,6 +3,7 @@
 require_once "controller/server/IndividualsController.php";
 require_once "controller/server/QuestionsController.php";
 require_once "controller/server/AssertionsController.php";
+require_once "controller/server/SourcesController.php";
 
 function individualsDropdown($htmlid) 
 {
@@ -91,4 +92,30 @@ function previousResearchAccordion($htmlid = "accordionPreviousResearch")
     $returnhtml .= '</div>';
     return $returnhtml;
 }
+
+function sourcesTableRows($researchlogid='')
+{
+    $returnhtml = '';
+    $soursController = New SourcesController;
+    foreach($soursController->getAllSources() as $row)
+    {
+        $returnhtml .= '<tr>';
+        if($researchlogid != '') {
+            $returnhtml .= '<td><a href="researchlog.php?researchlogid='.$researchlogid.'&sourceid='.$row["id"].'" class="btn btn-info"><i class="fa fa-paperclip"></i> '.$row["id"].'</a></td>';
+        } else {
+            $returnhtml .= '<td><a href="source.php?id='.$row["id"].'" class="btn btn-warning"><i class="fa fa-pencil"></i> '.$row["id"].'</a></td>';
+        }
+        $returnhtml .= '<td>'.$row["category"].'</td>';
+        $returnhtml .= '<td>'.$row["citation"].'</td>';
+        $returnhtml .= '<td>'.$row["sourcedate"].'</td>';
+        $returnhtml .= '<td>'.$row["provenance"].'</td>';
+        $returnhtml .= '<td>'.$row["informants"].'</td>';
+        $returnhtml .= '<td>'.$row["mediaurl"].'</td>';
+        $returnhtml .= '<td>'.$row["created"].'</td>';
+        $returnhtml .= '<td>'.$row["lastmodified"].'</td>';
+        $returnhtml .= '</tr>';    
+    }
+    return $returnhtml;
+}
+
 ?>

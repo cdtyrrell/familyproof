@@ -70,7 +70,7 @@ if($_SERVER["REQUEST_METHOD"] == "GET")
                             <label>Dates of birth and death</label>
                             <input type="text" name="dates" class="form-control" value="<?php echo (isset($dates)) ? $dates : ''; ?>">
                         </div>
-                        <input type="submit" class="btn btn-primary" value="Create">
+                        <input type="submit" class="btn btn-primary" value="<?php echo ($gottenID) ? 'Update' : 'Create'; ?>">
                         <a href="index.php" class="btn btn-secondary ml-2">Cancel</a>
                     </form>
                 </div>
