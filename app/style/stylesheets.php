@@ -20,10 +20,6 @@ if(get_http_status_code("https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/
 } else {
     echo '<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">';
 }
+
+echo '<link rel="stylesheet" href="style/general.css">';
 ?>
-<style>
-    .wrapper{
-        width: 1200px;
-        margin: 0 auto;
-    }
-</style>

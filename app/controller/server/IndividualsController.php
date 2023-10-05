@@ -8,13 +8,24 @@ class IndividualsController extends Controller
     private $allIndividualsArr = array();
 
     // methods
-    function __construct() {
+    function __construct()
+    {
         parent::__construct();
         $this->setAllIndividuals();
     }
-
-    private function setAllIndividuals() {
-        $sql = "SELECT id, identifier FROM individuals ORDER BY presumedname, presumeddates";
+    
+    function __destruct()
+    {
+        parent::__destruct();
+    }
+    
+    private function setAllIndividuals($sortStr = 'presumedname, presumeddates')
+    {
+        $sql = "SELECT id, identifier FROM individuals";
+        if($sortStr != '')
+        {
+            $sql .= " ORDER BY " . $sortStr;
+        }
         $indiArr = array();
         if($result = mysqli_query($this->link, $sql))
         {
@@ -29,7 +40,7 @@ class IndividualsController extends Controller
             $this->allIndividualsArr = $indiArr;
         }
         else{
-            $this->allIndividualsArr = ['this has failed'];
+            $this->allIndividualsArr = ['ERROR: Contact administrator'];
         }
     }
 

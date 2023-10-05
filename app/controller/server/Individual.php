@@ -8,7 +8,18 @@ class Individual extends IndividualsController
     public $id = 0;
 
     // methods
-    public function setId($requestedId) {
+    function __construct()
+    {
+        parent::__construct();
+    }
+
+    function __destruct()
+    {
+        parent::__destruct();
+    }
+
+    public function setId($requestedId)
+    {
         if($requestedId && is_numeric($requestedId))
         {
             $this->id = $requestedId;
