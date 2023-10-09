@@ -28,5 +28,3 @@ An Assertion/Conclusion is an answer to a Subject + Research Question pair. The 
 Begin by selecting a Subject to study. Then choose a Research Question for that Subject. Once determined, begin research. Research proceeds either through de novo searching (online or in-person) or by reviewing previously documented Information and Sources. De novo research involves searching for Sources that may be related to the Research Question. Research should be documented in a log: which database was used, what search terms, and which sources were found. Sources already existing in the database can be flagged for evaluation and new Sources can be added to 
 
 ## Organization
-Binder = Surname: McNutt (1.5) McClean (1.5) Ebben (1.5) VanDyk (1.5) Tyrrell (1.5) Misc (2)
-Separator = Family, Chronological back from source person: Robert C, Vivian G., 

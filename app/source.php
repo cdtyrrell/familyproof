@@ -1,4 +1,5 @@
 <?php
+/*
 // Include config file
 require_once "config/config.php";
  
@@ -36,7 +37,7 @@ if($result = mysqli_query($link, $sql)){
         $questionsdropdown = '<div class="alert alert-danger"><em>No question found.</em></div>';
     }
 }
-
+*/
 // url query
 if($_SERVER["REQUEST_METHOD"] == "GET"){
     if(isset($_GET['researchlogid']) && !empty(trim($_GET['researchlogid']))) { $researchlogid = trim($_GET['researchlogid']); }
@@ -176,32 +177,23 @@ if($_SERVER["REQUEST_METHOD"] == "POST"){
 <head>
     <meta charset="UTF-8">
     <title>New Source</title>
-    <?php require_once "style/stylesheets.php"; ?>
+    <?php 
+        require_once "style/stylesheets.php";
+        require_once "controller/server/htmlElements.php";
+        require_once "controller/server/Source.php";
+        $sourController = New Source;
+
+        if(isset($sourceid) && !empty(trim($sourceid)))
+        {
+            $sourController->setID($sourceid);
+            $sourController->setProperties();
+        }
+    ?>
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
-    <script>
-        function loadTemplate() {
-            const loaderbutton = document.getElementById("templateloader");
-            const cat = document.getElementById("category");
-            if(cat.value > 0) {
-                if(loaderbutton.className == 'btn btn-warning') {
-                    cat.disabled = false;
-                    loaderbutton.innerHTML = ' Load Template';
-                    loaderbutton.className = 'btn btn-primary';
-                } else {
-                // populate citation field
-                document.getElementById("citation").value = templates[cat.value];
-                // disable template loader
-                cat.disabled = true;
-                loaderbutton.innerHTML = ' Reset Template';
-                loaderbutton.className = 'btn btn-warning';
-                }
-            }
-        }
-    </script>
+    <script src="controller/client/source.js"></script>    
 </head>
 <body>
-    <?php echo $saveme; ?>
     <?php require_once "header.php"; ?>
     <div class="wrapper">
         <div class="container-fluid">
@@ -211,186 +203,76 @@ if($_SERVER["REQUEST_METHOD"] == "POST"){
                     <p></p>
                     <form action="<?php echo htmlspecialchars($_SERVER["PHP_SELF"]); ?>" method="post">
                         <?php
-                        if(isset($sourceid) && !empty(trim($sourceid))) {
-                            echo '<input type="hidden" name="id" value="' . $sourceid . '">';
-                        }
-                        if(isset($researchlogid) && !empty($researchlogid)){
-                            echo '<input type="hidden" name="researchlogid" value="' . $researchlogid . '">';
-                        }
-                        echo '<div class="row">';
-                        echo '<div class="form-group col-md-9">';
-
-                            // Include config file
-                            require_once "config/config.php";
-                            
-                            // Get source data for update
-                            if(isset($sourceid) && !empty(trim($sourceid))) {
-                                $sql = "SELECT id, category, citation, sourcedate, provenance, informants, mediaurl FROM sources WHERE id=" . $sourceid;
-                                if($result = mysqli_query($link, $sql)){
-                                    if(mysqli_num_rows($result) == 1){
-                                        $row = mysqli_fetch_array($result, MYSQLI_ASSOC);
-
-                                        // Retrieve individual field value
-                                        $category = $row["category"];
-                                        $citation = $row["citation"];
-                                        $sourcedate = $row["sourcedate"];
-                                        $provenance =  $row["provenance"];
-                                        $informants = $row["informants"];
-                                        $url = $row["mediaurl"];
-                        
-                                        // Free result set
-                                        mysqli_free_result($result);
-
-                                        //echo '<label>Category</label>';
-                                        //echo '<input type="text" name="cat" id="category" class="form-control" value="'.$category.'">';
-
-                                    }
-                                } else {
-                                    echo '<div class="alert alert-danger"><em>No records were found.</em></div>';
-                                }
-                            } else {
-
-                                // Attempt select query execution
-                                $sql = "SELECT id, category, pagecitation FROM sourcetemplates ORDER BY category";
-                                $templatearray = [];
-                                if($result = mysqli_query($link, $sql)){
-                                    if(mysqli_num_rows($result) > 0){
-                                        echo '<label>Category</label>';
-                                        echo '<select name="cat" id="category" class="form-control">';
-                                        echo '<option value="0"></option>';
-                                            while($row = mysqli_fetch_array($result)){
-                                                echo '<option value="' . $row['id'] . '">' . $row['category'] . '</option>';
-                                                $templatearray[$row['id']] = $row['pagecitation'];
-                                            }
-                                        echo "</select>";
-                                        // Free result set
-                                        mysqli_free_result($result);
-                                        echo '</div><div class="form-group col-md-3 mt-4"><button type="button" id="templateloader" class="btn btn-primary" onclick="loadTemplate()"> Load Template</button>';
-                                        echo '<script>var templates = '.json_encode($templatearray).';</script>';
-                                    } else{
-                                        echo '<div class="alert alert-danger"><em>No records were found.</em></div>';
-                                    }
-                                } else{
-                                    echo "Oops! Something went wrong. Please try again later.";
-                                }
+                            if(isset($sourceid) && !empty(trim($sourceid)))
+                            {
+                                echo '<input type="hidden" name="id" value="' . $sourceid . '">';
                             }
-
+                            if(isset($researchlogid) && !empty(trim($researchlogid)))
+                            {
+                                echo '<input type="hidden" name="researchlogid" value="' . $researchlogid . '">';
+                            }
                         ?>
-                        </div></div>
+                        <div class="row">
+                            <div class="form-group col-md-9">
+                                <label>Category</label>
+                                <?php
+                                    echo sourceTemplateDropdown();
+                                    echo sourceTemplateJSON();
+                                ?>
+                            </div>
+                            <div class="form-group col-md-3 mt-4">
+                                <?php
+                                    if(!isset($sourceid) || empty(trim($sourceid)))
+                                    {
+                                        echo '<button type="button" id="templateloader" class="btn btn-primary" onclick="loadTemplate()"> Load Template</button>';
+                                    }
+                                ?>
+                            </div>
+                        </div>
                         <div class="form-group">
                             <label>Citation</label>
-                            <textarea name="cite" id="citation" class="form-control"><?php echo $citation; ?></textarea>
+                            <textarea name="cite" id="citation" class="form-control"><?php echo $sourController->citation; ?></textarea>
                         </div>
                         <div class="row">
                             <div class="col-md-3">
                                 <div class="form-group">
                                     <label>Date (yyyy-mm-dd)</label>
-                                    <input type="text" name="date" class="form-control" value="<?php echo $sourcedate; ?>">
+                                    <input type="text" name="date" class="form-control" value="<?php echo $sourController->sourcedate; ?>">
                                 </div>
                             </div>
                             <div class="col-md-3">
                                 <div class="form-group">
                                     <label>Provenance</label>
                                     <select name="prov" class="form-control">
-                                    <?php 
-                                    if($provenance == 'unknown') {
-                                        echo '<option value="unknown" selected>Unknown</option>';
-                                    } else {
-                                        echo '<option value="unknown">Unknown</option>';
-                                    }
-                                    if($provenance == 'original') {
-                                        echo '<option value="original" selected>Original</option>';
-                                    } else {
-                                        echo '<option value="original">Original</option>';
-                                    }
-                                    if($provenance == 'derived') {
-                                        echo '<option value="derived" selected>Derived</option>';
-                                    } else {
-                                        echo '<option value="derived">Derived</option>';
-                                    }
-                                    if($provenance == 'authored') {
-                                        echo '<option value="authored" selected>Authored</option>';
-                                    } else {
-                                        echo '<option value="authored">Authored</option>';
-                                    }
-                                    ?>
+                                        <option value="unknown" <?php ($sourController->provenance == 'unknown') ? 'selected' : '' ?> >Unknown</option>
+                                        <option value="original" <?php ($sourController->provenance == 'original') ? 'selected' : '' ?> >Original</option>
+                                        <option value="derived" <?php ($sourController->provenance == 'derived') ? 'selected' : '' ?> >Derived</option>
+                                        <option value="authored" <?php ($sourController->provenance == 'authored') ? 'selected' : '' ?> >Authored</option>
                                     </select>
                                 </div>
                             </div>
                             <div class="col-md-6">
                                 <div class="form-group">
                                     <label>Informant(s)</label>
-                                    <input type="text" name="inform" class="form-control" value="<?php echo $informants; ?>">
+                                    <input type="text" name="inform" class="form-control" value="<?php echo $sourController->informants; ?>">
                                 </div>
                             </div>
                         </div>
                         <h3 class="mt-5">Add Source Information</h3>
-
-                        <?php
-                        if(isset($sourceid)){
-                            $sql = "SELECT id, subjectid, questionid, content FROM information WHERE sourceid = ". $sourceid ." ORDER BY subjectid, questionid";
-                            if($result = mysqli_query($link, $sql)){
-                                if(mysqli_num_rows($result) > 0){
-                                    $infoArr = $idArr = array(array());
-                                    $skeys = $qkeys = array();
-                                    while($row = mysqli_fetch_array($result)){
-                                        $skeys[] = $row['subjectid'];
-                                        $qkeys[] = $row['questionid'];
-                                        $infoArr[$row['subjectid']][$row['questionid']] = $row['content'];
-                                        $idArr[$row['subjectid']][$row['questionid']] = $row['id'];
-                                    }
-                                }
-                                // Free result set
-                                mysqli_free_result($result);
-                                $skeys = array_values(array_unique($skeys, SORT_NUMERIC));
-                                $qkeys = array_values(array_unique($qkeys, SORT_NUMERIC));
-                            }
-                        }
-                        ?>
-
                         <div id="container" class="table-responsive">
-
-                        <table class="table table-bordered table-striped table-sm table-responsive" style="width:3000px;">
+                            <table class="table table-bordered table-striped table-sm table-responsive" style="width:3000px;">
                             <thead>
-                                <tr>
-                                    <th>Individual</th>
-                                    <?php
-                                    for($q = 1; $q < 21; $q++) {
-                                        echo '<th><select class="form-control" id="h'.$q.'" name="h'.$q.'"><'.$questionsdropdown.'</th>';
-                                    }
-                                    ?>
-                                </tr>
+                                <?php echo informationTableHeader(); ?>
                             </thead>
                             <tbody>
-                                <?php 
-                                for($s = 1; $s < 11; $s++) {
-                                    echo '<tr>';
-                                    echo '<td><select class="form-control" id="p'.$s.'" name="p'.$s.'">'.$individualsdropdown.'</td>';
-                                    for($q = 1; $q < 21; $q++) {
-                                        if(count($skeys) >= $s && count($qkeys) >= $q){
-                                            echo '<td><input type="text" class="form-control" name="'.$s.'-'.$q.'" value="'.$infoArr[$skeys[$s-1]][$qkeys[$q-1]].'">';
-                                            echo '<input type="hidden" name="id'.$s.'-'.$q.'" value="'.$idArr[$skeys[$s-1]][$qkeys[$q-1]].'"></td>';
-                                        } else {
-                                            echo '<td><input type="text" class="form-control" name="'.$s.'-'.$q.'">';
-                                            echo '<input type="hidden" name="id'.$s.'-'.$q.'" value=""></td>';
-                                        }
-                                    }
-                                    echo '</tr>';
-                                }
-                                ?>
+                                <?php echo informationTableRows($sourceid); ?>
                             </tbody>
                         </table>
-                        <?php 
-                            echo '<script>';
-                            echo '['.implode(",", $skeys).'].forEach((sval, idx) => { document.getElementById("p"+(idx+1)).value = sval });';
-                            echo '['.implode(",", $qkeys).'].forEach((qval, indx) => { document.getElementById("h"+(indx+1)).value = qval });';
-                            echo '</script>';
-                        ?>
-</div></div></div></div>
-
+                        <?php echo informationScript($sourceid); ?>
+                        </div>
                         <?php
-                            //}
-                            if(isset($sourceid)) {
+                            if(isset($sourceid))
+                            {
                                 $SubmitValue = "Save";
                             } else {
                                 $SubmitValue = "Create";
